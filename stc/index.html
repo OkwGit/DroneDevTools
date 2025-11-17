@@ -626,7 +626,7 @@
                                 <tr>
                                     <th style="width: 50px;">Move</th>
                                     <th>Enabled</th>
-                                    <th>Category | 分类</th>
+                                    <th>Group | 组</th>
                                     <th>Name | 名称</th>
                                     <th>Qty | 数量</th>
                                     <th>Unit (g) | 单重</th>
@@ -655,6 +655,7 @@
                     <div class="scenario-controls">
                         <button class="btn btn-primary" onclick="saveCurrentScenario()" id="saveBtn">Save</button>
                         <button class="btn btn-secondary" onclick="saveScenarioAs()">Save As...</button>
+                        <button class="btn btn-secondary" onclick="newProject()">New</button>
                         <select id="scenarioSelect" onchange="loadScenario()" style="padding: 2px; border: 2px inset #C0C0C0;">
                             <option value="">Select Project...</option>
                         </select>
@@ -1425,6 +1426,63 @@
             markAsUnsaved();
         }
 
+        function getGroupOptionsForTable(currentGroup) {
+            // 获取所有使用的组（包括不在 groups 数组中的）
+            const allUsedGroups = new Set();
+            items.forEach(item => {
+                if (item.group && item.group.trim()) {
+                    allUsedGroups.add(item.group);
+                }
+            });
+            
+            // 合并 groups 数组和实际使用的组
+            const allGroups = Array.from(new Set([...groups, ...allUsedGroups])).sort();
+            
+            let options = '<option value="">No Group | 无组</option>';
+            options += allGroups.map(g => 
+                `<option value="${g}" ${currentGroup === g ? 'selected' : ''}>${g}</option>`
+            ).join('');
+            options += '<option value="__custom__">Custom | 自定义</option>';
+            
+            return options;
+        }
+
+        function changeItemGroupFromTable(index, newGroup) {
+            const item = items[index];
+            const oldGroup = item.group || '';
+            
+            if (newGroup === '__custom__') {
+                // 如果选择自定义，弹出输入框
+                const customGroup = prompt('Enter custom group name:', oldGroup);
+                if (customGroup && customGroup.trim()) {
+                    const trimmedGroup = customGroup.trim();
+                    // 检查是否已存在
+                    if (items.some(i => i.group === trimmedGroup && items.indexOf(i) !== index)) {
+                        alert(`Group "${trimmedGroup}" already exists.`);
+                        renderItems();
+                        return;
+                    }
+                    item.group = trimmedGroup;
+                    // 如果不在 groups 数组中，添加它
+                    if (!groups.includes(trimmedGroup)) {
+                        groups.push(trimmedGroup);
+                        groups.sort();
+                    }
+                    renderItems();
+                    updateSummary();
+                    markAsUnsaved();
+                } else {
+                    // 取消，恢复原值
+                    renderItems();
+                }
+            } else if (newGroup !== oldGroup) {
+                item.group = newGroup || '';
+                renderItems();
+                updateSummary();
+                markAsUnsaved();
+            }
+        }
+
         function changeItemCategory(index, newCategory) {
             const item = items[index];
             const oldCategory = item.category;
@@ -1676,9 +1734,9 @@
                                    onchange="toggleItemEnabled(${index})">
                         </td>
                         <td>
-                            <select onchange="changeItemCategory(${index}, this.value)" 
+                            <select onchange="changeItemGroupFromTable(${index}, this.value)" 
                                     style="padding: 2px; border: 2px inset #C0C0C0; font-size: 11px; width: 100%;">
-                                ${getCategoryOptions(item.category)}
+                                ${getGroupOptionsForTable(item.group || '')}
                             </select>
                         </td>
                         <td>${item.name}</td>
@@ -2023,6 +2081,103 @@
                 }
             };
             input.click();
+        }
+
+        function newProject() {
+            // 如果有项目名称且有未保存的更改，先保存当前项目
+            if (project.name && project.name.trim()) {
+                if (hasUnsavedChanges) {
+                    // 静默保存，不显示弹窗
+                    const scenarioName = project.name.trim();
+                    if (currentScenarioName && scenarios[currentScenarioName]) {
+                        if (currentScenarioName !== scenarioName) {
+                            renameScenario(currentScenarioName, scenarioName);
+                        } else {
+                            scenarios[scenarioName] = {
+                                name: scenarioName,
+                                project: { ...project },
+                                items: items.map(item => ({ ...item })),
+                                savedAt: new Date().toISOString()
+                            };
+                            updateScenarioSelect();
+                            saveToStorage();
+                            hasUnsavedChanges = false;
+                            updateSaveStatus();
+                        }
+                    } else if (!scenarios[scenarioName]) {
+                        // 如果场景不存在，创建新场景
+                        scenarios[scenarioName] = {
+                            name: scenarioName,
+                            project: { ...project },
+                            items: items.map(item => ({ ...item })),
+                            savedAt: new Date().toISOString()
+                        };
+                        currentScenarioName = scenarioName;
+                        updateScenarioSelect();
+                        saveToStorage();
+                        hasUnsavedChanges = false;
+                        updateSaveStatus();
+                    } else {
+                        // 场景已存在，静默覆盖
+                        scenarios[scenarioName] = {
+                            name: scenarioName,
+                            project: { ...project },
+                            items: items.map(item => ({ ...item })),
+                            savedAt: new Date().toISOString()
+                        };
+                        currentScenarioName = scenarioName;
+                        updateScenarioSelect();
+                        saveToStorage();
+                        hasUnsavedChanges = false;
+                        updateSaveStatus();
+                    }
+                }
+            }
+            
+            // 创建新的空白项目
+            project = {
+                name: '',
+                description: '',
+                rotorCount: 4,
+                targetAUW: null,
+                targetTW: 3.0,
+                motorThrust: 1400
+            };
+            
+            items = [];
+            currentScenarioName = null;
+            
+            // 更新UI
+            document.getElementById('projectName').value = '';
+            document.getElementById('projectDescription').value = '';
+            document.getElementById('targetAUW').value = '';
+            document.getElementById('targetTW').value = '3.0';
+            document.getElementById('motorThrust').value = '1400';
+            
+            // 更新电机数量下拉框
+            const rotorSelect = document.getElementById('rotorCount');
+            rotorSelect.value = '4';
+            document.getElementById('customRotorCount').style.display = 'none';
+            
+            // 更新场景选择
+            document.getElementById('scenarioSelect').value = '';
+            updateScenarioSelect();
+            updateCurrentScenarioInfo();
+            document.getElementById('deleteScenarioBtn').style.display = 'none';
+            
+            // 渲染项目列表
+            renderItems();
+            updateSummary();
+            
+            // 标记为已保存（因为是新项目）
+            hasUnsavedChanges = false;
+            updateSaveStatus();
+            
+            // 保存到存储
+            saveToStorage();
+            
+            // 聚焦到项目名称输入框
+            document.getElementById('projectName').focus();
         }
 
         function saveCurrentScenario() {
