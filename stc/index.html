@@ -623,12 +623,14 @@
                 <div class="scenario-section">
                     <h2>SAVES</h2>
                     <div class="scenario-controls">
-                        <button class="btn btn-secondary" onclick="saveScenario()">Save Current Scenario</button>
+                        <button class="btn btn-primary" onclick="saveCurrentScenario()" id="saveBtn">Save</button>
+                        <button class="btn btn-secondary" onclick="saveScenarioAs()">Save As...</button>
                         <select id="scenarioSelect" onchange="loadScenario()" style="padding: 2px; border: 2px inset #C0C0C0;">
                             <option value="">Select Scenario...</option>
                         </select>
                         <button class="btn btn-danger btn-small" onclick="deleteScenario()" id="deleteScenarioBtn" style="display:none;">Delete</button>
                     </div>
+                    <div id="currentScenarioInfo" style="font-size: 10px; color: #666; margin-top: 5px; font-style: italic;"></div>
                 </div>
 
                 <!-- Action Buttons -->
@@ -742,6 +744,7 @@
         let items = [];
         let scenarios = {};
         let editingItemIndex = null;
+        let currentScenarioName = null;  // 当前正在编辑的场景名称
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -758,6 +761,20 @@
             setupEventListeners();
             updateSummary();
             loadSampleData();
+            updateScenarioSelect();
+            // 如果保存了当前场景，自动加载它
+            if (currentScenarioName && scenarios[currentScenarioName]) {
+                // 延迟一点确保 UI 已准备好
+                setTimeout(() => {
+                    const select = document.getElementById('scenarioSelect');
+                    if (select) {
+                        select.value = currentScenarioName;
+                        loadScenario();
+                    }
+                }, 100);
+            } else {
+                updateCurrentScenarioInfo();
+            }
         });
 
         function setupEventListeners() {
@@ -1183,7 +1200,26 @@
             input.click();
         }
 
-        function saveScenario() {
+        function saveCurrentScenario() {
+            if (currentScenarioName && scenarios[currentScenarioName]) {
+                // 覆盖保存当前场景
+                scenarios[currentScenarioName] = {
+                    name: currentScenarioName,
+                    project: { ...project },
+                    items: items.map(item => ({ ...item })),
+                    savedAt: new Date().toISOString()
+                };
+                updateScenarioSelect();
+                saveToStorage();
+                updateCurrentScenarioInfo();
+                // 不显示弹窗，静默保存
+            } else {
+                // 没有当前场景，提示保存为新场景
+                saveScenarioAs();
+            }
+        }
+
+        function saveScenarioAs() {
             const name = prompt('Enter scenario name:');
             if (name && name.trim()) {
                 scenarios[name] = {
@@ -1192,8 +1228,10 @@
                     items: items.map(item => ({ ...item })),
                     savedAt: new Date().toISOString()
                 };
+                currentScenarioName = name;  // 设置为当前场景
                 updateScenarioSelect();
                 saveToStorage();
+                updateCurrentScenarioInfo();
                 alert(`Scenario "${name}" saved!`);
             }
         }
@@ -1203,6 +1241,9 @@
             const scenarioName = select.value;
             if (scenarioName && scenarios[scenarioName]) {
                 const scenario = scenarios[scenarioName];
+                
+                // 设置当前场景名称
+                currentScenarioName = scenarioName;
                 
                 // 恢复项目设置
                 if (scenario.project) {
@@ -1232,8 +1273,12 @@
                 renderItems();
                 updateSummary();
                 saveToStorage();
+                updateCurrentScenarioInfo();
                 document.getElementById('deleteScenarioBtn').style.display = 'inline-block';
             } else {
+                // 没有选中场景，清除当前场景
+                currentScenarioName = null;
+                updateCurrentScenarioInfo();
                 document.getElementById('deleteScenarioBtn').style.display = 'none';
             }
         }
@@ -1244,7 +1289,11 @@
             if (scenarioName && confirm(`Delete scenario "${scenarioName}"?`)) {
                 delete scenarios[scenarioName];
                 select.value = '';
+                if (currentScenarioName === scenarioName) {
+                    currentScenarioName = null;  // 清除当前场景
+                }
                 updateScenarioSelect();
+                updateCurrentScenarioInfo();
                 document.getElementById('deleteScenarioBtn').style.display = 'none';
                 saveToStorage();
             }
@@ -1252,7 +1301,7 @@
 
         function updateScenarioSelect() {
             const select = document.getElementById('scenarioSelect');
-            const current = select.value;
+            const current = select.value || currentScenarioName;
             select.innerHTML = '<option value="">Select Scenario...</option>';
             Object.keys(scenarios).forEach(name => {
                 const option = document.createElement('option');
@@ -1262,6 +1311,20 @@
             });
             if (current && scenarios[current]) {
                 select.value = current;
+            }
+        }
+
+        function updateCurrentScenarioInfo() {
+            const infoDiv = document.getElementById('currentScenarioInfo');
+            if (currentScenarioName && scenarios[currentScenarioName]) {
+                const scenario = scenarios[currentScenarioName];
+                const savedDate = new Date(scenario.savedAt);
+                const timeStr = savedDate.toLocaleString();
+                infoDiv.textContent = `Current: "${currentScenarioName}" (Last saved: ${timeStr})`;
+                infoDiv.style.color = '#000000';
+            } else {
+                infoDiv.textContent = 'No scenario loaded. Use "Save As..." to create a new scenario.';
+                infoDiv.style.color = '#666666';
             }
         }
 
@@ -1278,7 +1341,8 @@
             const data = {
                 project,
                 items,
-                scenarios
+                scenarios,
+                currentScenarioName  // 保存当前场景名称
             };
             localStorage.setItem('droneWeightCalculator', JSON.stringify(data));
         }
@@ -1307,6 +1371,14 @@
                     }
                     if (data.items) items = data.items;
                     if (data.scenarios) scenarios = data.scenarios;
+                    if (data.currentScenarioName && scenarios[data.currentScenarioName]) {
+                        currentScenarioName = data.currentScenarioName;
+                        // 如果保存了当前场景，自动加载它
+                        const select = document.getElementById('scenarioSelect');
+                        select.value = currentScenarioName;
+                        // 注意：这里不调用 loadScenario()，因为 UI 还没准备好
+                        // 会在初始化完成后通过 updateScenarioSelect 恢复选中状态
+                    }
                     renderItems();
                     updateScenarioSelect();
                 } catch (e) {
