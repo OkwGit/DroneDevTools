@@ -24,26 +24,34 @@
             max-width: 1400px;
             margin: 0 auto;
             background: #C0C0C0;
-            border: 2px outset #C0C0C0;
+            border: 2px solid #808080;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #808080;
+            border-bottom: 2px solid #808080;
             overflow: hidden;
         }
 
         .header {
-            background: #316AC5;
+            background: #0054E3;
             color: #FFFFFF;
-            padding: 15px;
-            text-align: center;
-            border-bottom: 2px inset #316AC5;
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #000080;
+            background-image: linear-gradient(to bottom, #0054E3 0%, #0040C0 100%);
         }
 
         .header h1 {
-            font-size: 18px;
-            margin-bottom: 5px;
+            font-size: 13px;
+            margin: 0;
             font-weight: bold;
+            text-align: left;
         }
 
         .header p {
-            font-size: 11px;
+            font-size: 10px;
+            margin: 2px 0 0 0;
+            opacity: 0.9;
         }
 
         .main-content {
@@ -61,16 +69,20 @@
 
         .project-settings {
             background: #C0C0C0;
-            padding: 10px;
-            border: 2px inset #C0C0C0;
-            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #808080;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            margin-bottom: 8px;
         }
 
         .project-settings h2 {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #000000;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
+            border-bottom: 1px solid #808080;
+            padding-bottom: 3px;
         }
 
         .form-group {
@@ -115,8 +127,12 @@
         }
 
         .btn {
-            padding: 3px 15px;
-            border: 2px outset #C0C0C0;
+            padding: 2px 12px;
+            border: 1px outset #C0C0C0;
+            border-top-color: #FFFFFF;
+            border-left-color: #FFFFFF;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
             font-size: 11px;
             font-weight: normal;
             cursor: pointer;
@@ -124,50 +140,87 @@
             background: #C0C0C0;
             color: #000000;
             font-family: 'MS Sans Serif', Tahoma, Arial, sans-serif;
+            min-height: 21px;
         }
 
         .btn:active {
-            border: 2px inset #C0C0C0;
+            border: 1px inset #C0C0C0;
+            border-top-color: #808080;
+            border-left-color: #808080;
+            border-right-color: #FFFFFF;
+            border-bottom-color: #FFFFFF;
         }
 
         .btn-primary {
             background: #316AC5;
             color: #FFFFFF;
-            border: 2px outset #316AC5;
+            border: 1px outset #316AC5;
+            border-top-color: #6B9DFF;
+            border-left-color: #6B9DFF;
+            border-right-color: #004080;
+            border-bottom-color: #004080;
         }
 
         .btn-primary:active {
-            border: 2px inset #316AC5;
+            border: 1px inset #316AC5;
+            border-top-color: #004080;
+            border-left-color: #004080;
+            border-right-color: #6B9DFF;
+            border-bottom-color: #6B9DFF;
         }
 
         .btn-success {
             background: #00C000;
             color: #FFFFFF;
-            border: 2px outset #00C000;
+            border: 1px outset #00C000;
+            border-top-color: #40FF40;
+            border-left-color: #40FF40;
+            border-right-color: #008000;
+            border-bottom-color: #008000;
         }
 
         .btn-success:active {
-            border: 2px inset #00C000;
+            border: 1px inset #00C000;
+            border-top-color: #008000;
+            border-left-color: #008000;
+            border-right-color: #40FF40;
+            border-bottom-color: #40FF40;
         }
 
         .btn-danger {
             background: #C00000;
             color: #FFFFFF;
-            border: 2px outset #C00000;
+            border: 1px outset #C00000;
+            border-top-color: #FF4040;
+            border-left-color: #FF4040;
+            border-right-color: #800000;
+            border-bottom-color: #800000;
         }
 
         .btn-danger:active {
-            border: 2px inset #C00000;
+            border: 1px inset #C00000;
+            border-top-color: #800000;
+            border-left-color: #800000;
+            border-right-color: #FF4040;
+            border-bottom-color: #FF4040;
         }
 
         .btn-secondary {
             background: #C0C0C0;
             color: #000000;
-            border: 2px outset #C0C0C0;
+            border: 1px outset #C0C0C0;
+            border-top-color: #FFFFFF;
+            border-left-color: #FFFFFF;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
         }
 
         .btn-secondary:active {
-            border: 2px inset #C0C0C0;
+            border: 1px inset #C0C0C0;
+            border-top-color: #808080;
+            border-left-color: #808080;
+            border-right-color: #FFFFFF;
+            border-bottom-color: #FFFFFF;
         }
 
         .btn-small {
@@ -180,23 +233,28 @@
         }
 
         .items-section h2 {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #000000;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
+            border-bottom: 1px solid #808080;
+            padding-bottom: 3px;
         }
 
         .table-container {
             overflow-x: auto;
-            border: 2px inset #C0C0C0;
+            border: 1px solid #808080;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
         }
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             background: #FFFFFF;
         }
 
@@ -205,18 +263,29 @@
         }
 
         th {
-            padding: 4px 8px;
+            padding: 3px 6px;
             text-align: left;
             font-weight: bold;
             color: #000000;
-            border: 1px solid #808080;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
             font-size: 11px;
+            background: #C0C0C0;
+        }
+
+        th:last-child {
+            border-right: none;
         }
 
         td {
-            padding: 4px 8px;
-            border: 1px solid #C0C0C0;
+            padding: 3px 6px;
+            border-right: 1px solid #C0C0C0;
+            border-bottom: 1px solid #C0C0C0;
             font-size: 11px;
+        }
+
+        td:last-child {
+            border-right: none;
         }
 
         tbody tr:nth-child(even) {
@@ -235,26 +304,32 @@
 
         .summary-panel {
             background: #C0C0C0;
-            padding: 10px;
-            border: 2px inset #C0C0C0;
+            padding: 8px;
+            border: 1px solid #808080;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
             position: sticky;
-            top: 10px;
-            max-height: calc(100vh - 20px);
+            top: 8px;
+            max-height: calc(100vh - 16px);
             overflow-y: auto;
         }
 
         .summary-panel h2 {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #000000;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
+            border-bottom: 1px solid #808080;
+            padding-bottom: 3px;
         }
 
         .summary-card {
             background: #FFFFFF;
-            padding: 8px;
-            border: 2px inset #C0C0C0;
-            margin-bottom: 10px;
+            padding: 6px;
+            border: 1px solid #808080;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            margin-bottom: 8px;
         }
 
         .summary-card h3 {
@@ -334,8 +409,12 @@
 
         .modal-content {
             background: #C0C0C0;
-            padding: 10px;
+            padding: 8px;
             border: 2px outset #C0C0C0;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #808080;
+            border-bottom: 2px solid #808080;
             max-width: 500px;
             width: 90%;
             max-height: 90vh;
@@ -346,11 +425,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            background: #316AC5;
+            margin: -8px -8px 8px -8px;
+            background: #0054E3;
+            background-image: linear-gradient(to bottom, #0054E3 0%, #0040C0 100%);
             color: #FFFFFF;
-            padding: 5px;
-            border: 2px inset #316AC5;
+            padding: 4px 8px;
+            border-bottom: 1px solid #000080;
         }
 
         .modal-header h2 {
@@ -361,22 +441,40 @@
 
         .close-btn {
             background: #C0C0C0;
-            border: 2px outset #C0C0C0;
-            font-size: 14px;
+            border: 1px outset #C0C0C0;
+            border-top-color: #FFFFFF;
+            border-left-color: #FFFFFF;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            font-size: 12px;
             cursor: pointer;
             color: #000000;
-            padding: 2px 6px;
+            padding: 1px 4px;
             font-family: 'MS Sans Serif', Tahoma, Arial, sans-serif;
+            min-width: 18px;
+            min-height: 18px;
         }
 
         .close-btn:active {
-            border: 2px inset #C0C0C0;
+            border: 1px inset #C0C0C0;
+            border-top-color: #808080;
+            border-left-color: #808080;
+            border-right-color: #FFFFFF;
+            border-bottom-color: #FFFFFF;
         }
 
         .scenario-section {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 2px inset #C0C0C0;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #808080;
+        }
+        
+        .scenario-section h2 {
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            border-bottom: 1px solid #808080;
+            padding-bottom: 3px;
         }
 
         .scenario-controls {
@@ -448,7 +546,7 @@
             <div class="left-panel">
                 <!-- Project Settings -->
                 <div class="project-settings">
-                    <h2>📋 Project Settings | 项目设置</h2>
+                    <h2>Project Settings | 项目设置</h2>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Project Name | 项目名称</label>
@@ -491,14 +589,14 @@
                 <!-- Items Section -->
                 <div class="items-section">
                     <h2>
-                        <span>📦 Items | 组件清单</span>
+                        <span>Items | 组件清单</span>
                         <button class="btn btn-primary btn-small" onclick="openAddItemModal()">+ Add Item</button>
                     </h2>
                     <div class="table-container">
                         <table id="itemsTable">
                             <thead>
                                 <tr>
-                                    <th>✓</th>
+                                    <th>Enabled</th>
                                     <th>Category | 分类</th>
                                     <th>Name | 名称</th>
                                     <th>Qty | 数量</th>
@@ -523,42 +621,45 @@
 
                 <!-- Scenario Section -->
                 <div class="scenario-section">
-                    <h2>🎬 Scenarios | 场景配置</h2>
+                    <h2>SAVES</h2>
                     <div class="scenario-controls">
-                        <button class="btn btn-secondary" onclick="saveScenario()">💾 Save Current Scenario</button>
+                        <button class="btn btn-secondary" onclick="saveScenario()">Save Current Scenario</button>
                         <select id="scenarioSelect" onchange="loadScenario()" style="padding: 2px; border: 2px inset #C0C0C0;">
                             <option value="">Select Scenario...</option>
                         </select>
-                        <button class="btn btn-danger btn-small" onclick="deleteScenario()" id="deleteScenarioBtn" style="display:none;">🗑️ Delete</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteScenario()" id="deleteScenarioBtn" style="display:none;">Delete</button>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <button class="btn btn-success" onclick="exportTXT()">📄 Export TXT</button>
-                    <button class="btn btn-secondary" onclick="exportJSON()">💾 Export JSON</button>
-                    <button class="btn btn-secondary" onclick="importJSON()">📥 Import JSON</button>
-                    <button class="btn btn-secondary" onclick="clearAll()">🗑️ Clear All</button>
+                    <button class="btn btn-success" onclick="exportTXT()">Export TXT</button>
+                    <button class="btn btn-secondary" onclick="exportJSON()">Export JSON</button>
+                    <button class="btn btn-secondary" onclick="importJSON()">Import JSON</button>
+                    <button class="btn btn-secondary" onclick="clearAll()">Clear All</button>
                 </div>
             </div>
 
             <!-- Summary Panel -->
             <div class="summary-panel">
-                <h2>📊 Summary | 汇总</h2>
+                <h2>Summary | 汇总</h2>
                 
                 <div class="summary-card">
                     <h3>Total Weight | 总重量</h3>
+                    <div class="sub-value" id="totalWeightFormula" style="font-family: monospace; font-size: 10px; margin-bottom: 5px;"></div>
                     <div class="value" id="totalWeightG">0 g</div>
                     <div class="sub-value" id="totalWeightKg">0.000 kg</div>
                 </div>
 
                 <div class="summary-card">
                     <h3>Weight per Motor | 每电机负载</h3>
+                    <div class="sub-value" id="weightPerMotorFormula" style="font-family: monospace; font-size: 10px; margin-bottom: 5px;"></div>
                     <div class="value" id="weightPerMotor">0.000 kg</div>
                 </div>
 
                 <div class="summary-card" id="twCard" style="display:none;">
                     <h3>Thrust-to-Weight Ratio | 推重比</h3>
+                    <div class="sub-value" id="twFormula" style="font-family: monospace; font-size: 10px; margin-bottom: 5px;"></div>
                     <div class="value">
                         <span id="twRatio">-</span>
                         <span class="tw-indicator" id="twIndicator"></span>
@@ -645,6 +746,15 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadFromStorage();
+            // Sync rotorCount UI with project.rotorCount
+            const rotorSelect = document.getElementById('rotorCount');
+            if ([3, 4, 6, 8].includes(project.rotorCount)) {
+                rotorSelect.value = String(project.rotorCount);
+            } else {
+                rotorSelect.value = 'custom';
+                document.getElementById('customRotorCount').style.display = 'block';
+                document.getElementById('customRotorCount').value = project.rotorCount;
+            }
             setupEventListeners();
             updateSummary();
             loadSampleData();
@@ -792,31 +902,82 @@
             const totalWeightG = enabledItems.reduce((sum, item) => sum + (item.qty * item.weightPerUnit), 0);
             const totalWeightKg = totalWeightG / 1000;
 
+            // 显示总重量公式
+            if (enabledItems.length > 0) {
+                // 显示前几个项目的详细计算
+                const showCount = Math.min(3, enabledItems.length);
+                const formulaParts = enabledItems.slice(0, showCount).map(item => {
+                    const itemTotal = item.qty * item.weightPerUnit;
+                    return `${item.qty} × ${item.weightPerUnit.toFixed(2)} = ${itemTotal.toFixed(2)}`;
+                });
+                let formulaText = `Σ(qty × weight) = ${formulaParts.join(' + ')}`;
+                if (enabledItems.length > showCount) {
+                    const remainingSum = enabledItems.slice(showCount).reduce((sum, item) => 
+                        sum + (item.qty * item.weightPerUnit), 0);
+                    formulaText += ` + ${remainingSum.toFixed(2)} (${enabledItems.length - showCount} more)`;
+                }
+                formulaText += ` = ${totalWeightG.toFixed(2)} g`;
+                document.getElementById('totalWeightFormula').textContent = formulaText;
+            } else {
+                document.getElementById('totalWeightFormula').textContent = 'Σ(qty × weight) = 0 g (no enabled items)';
+            }
+
             document.getElementById('totalWeightG').textContent = `${totalWeightG.toFixed(2)} g`;
             document.getElementById('totalWeightKg').textContent = `${totalWeightKg.toFixed(3)} kg`;
 
             const weightPerMotor = project.rotorCount > 0 ? totalWeightKg / project.rotorCount : 0;
+            if (project.rotorCount > 0) {
+                document.getElementById('weightPerMotorFormula').textContent = 
+                    `Total(kg) / Rotors = ${totalWeightKg.toFixed(3)} / ${project.rotorCount} = ${weightPerMotor.toFixed(3)} kg`;
+            } else {
+                document.getElementById('weightPerMotorFormula').textContent = 
+                    'Total(kg) / Rotors = N/A (rotor count = 0)';
+            }
             document.getElementById('weightPerMotor').textContent = `${weightPerMotor.toFixed(3)} kg`;
 
             // Category breakdown
             const categoryBreakdown = {};
+            const categoryItems = {};
             enabledItems.forEach(item => {
                 const category = item.category;
                 if (!categoryBreakdown[category]) {
                     categoryBreakdown[category] = 0;
+                    categoryItems[category] = [];
                 }
-                categoryBreakdown[category] += item.qty * item.weightPerUnit;
+                const itemTotal = item.qty * item.weightPerUnit;
+                categoryBreakdown[category] += itemTotal;
+                categoryItems[category].push(item);
             });
 
             const categoryList = document.getElementById('categoryBreakdown');
             categoryList.innerHTML = Object.entries(categoryBreakdown)
                 .sort((a, b) => b[1] - a[1])
-                .map(([cat, weight]) => `
-                    <li>
-                        <span>${cat}</span>
-                        <strong>${weight.toFixed(2)} g</strong>
-                    </li>
-                `).join('');
+                .map(([cat, weight]) => {
+                    const items = categoryItems[cat];
+                    let formulaText = '';
+                    if (items.length <= 2) {
+                        // 显示所有项目的计算
+                        formulaText = items.map(item => 
+                            `${item.qty} × ${item.weightPerUnit.toFixed(2)}`
+                        ).join(' + ');
+                    } else {
+                        // 只显示前两个
+                        formulaText = items.slice(0, 2).map(item => 
+                            `${item.qty} × ${item.weightPerUnit.toFixed(2)}`
+                        ).join(' + ') + ` + ... (${items.length - 2} more)`;
+                    }
+                    return `
+                        <li>
+                            <div>
+                                <span><strong>${cat}</strong></span>
+                                <div style="font-family: monospace; font-size: 9px; color: #666; margin-top: 2px;">
+                                    ${formulaText} = ${weight.toFixed(2)} g
+                                </div>
+                            </div>
+                            <strong>${weight.toFixed(2)} g</strong>
+                        </li>
+                    `;
+                }).join('');
 
             // Thrust-to-weight ratio
             if (project.motorThrust && project.rotorCount > 0) {
@@ -824,10 +985,12 @@
                 const twRatio = totalThrust / totalWeightG;
                 
                 document.getElementById('twCard').style.display = 'block';
+                document.getElementById('twFormula').textContent = 
+                    `(Motor Thrust × Rotors) / Total = (${project.motorThrust} × ${project.rotorCount}) / ${totalWeightG.toFixed(2)} = ${twRatio.toFixed(2)}`;
                 document.getElementById('twRatio').textContent = twRatio.toFixed(2);
                 
                 const indicator = document.getElementById('twIndicator');
-                indicator.textContent = twRatio >= 3 ? '✓ Safe' : (twRatio >= 2.5 ? '⚠ Warning' : '✗ Low');
+                indicator.textContent = twRatio >= 3 ? 'Safe' : (twRatio >= 2.5 ? 'Warning' : 'Low');
                 indicator.className = 'tw-indicator ' + (twRatio >= 3 ? 'tw-safe' : (twRatio >= 2.5 ? 'tw-warning' : 'tw-danger'));
                 
                 document.getElementById('twDetails').textContent = 
@@ -844,6 +1007,9 @@
                     const diff = totalWeightG - project.targetAUW;
                     comparison += `<div style="margin-bottom: 8px;">
                         <strong>Target AUW:</strong> ${project.targetAUW} g<br>
+                        <div style="font-family: monospace; font-size: 10px; color: #666; margin: 3px 0;">
+                            Diff = Current - Target = ${totalWeightG.toFixed(2)} - ${project.targetAUW} = ${diff > 0 ? '+' : ''}${diff.toFixed(2)} g
+                        </div>
                         <span style="color: ${diff > 0 ? '#ef4444' : '#10b981'}">
                             ${diff > 0 ? '+' : ''}${diff.toFixed(2)} g ${diff > 0 ? 'over' : 'under'}
                         </span>
@@ -855,6 +1021,9 @@
                     const diff = currentTW - project.targetTW;
                     comparison += `<div>
                         <strong>Target T/W:</strong> ${project.targetTW.toFixed(2)}<br>
+                        <div style="font-family: monospace; font-size: 10px; color: #666; margin: 3px 0;">
+                            Diff = Current - Target = ${currentTW.toFixed(2)} - ${project.targetTW.toFixed(2)} = ${diff > 0 ? '+' : ''}${diff.toFixed(2)}
+                        </div>
                         <span style="color: ${diff < 0 ? '#ef4444' : '#10b981'}">
                             Current: ${currentTW.toFixed(2)} (${diff > 0 ? '+' : ''}${diff.toFixed(2)})
                         </span>
@@ -1019,6 +1188,7 @@
             if (name && name.trim()) {
                 scenarios[name] = {
                     name,
+                    project: { ...project },  // 保存项目设置的深拷贝
                     items: items.map(item => ({ ...item })),
                     savedAt: new Date().toISOString()
                 };
@@ -1032,7 +1202,33 @@
             const select = document.getElementById('scenarioSelect');
             const scenarioName = select.value;
             if (scenarioName && scenarios[scenarioName]) {
-                items = scenarios[scenarioName].items.map(item => ({ ...item }));
+                const scenario = scenarios[scenarioName];
+                
+                // 恢复项目设置
+                if (scenario.project) {
+                    project = { ...scenario.project };
+                    
+                    // 更新 UI
+                    document.getElementById('projectName').value = project.name || '';
+                    document.getElementById('projectDescription').value = project.description || '';
+                    document.getElementById('targetAUW').value = project.targetAUW || '';
+                    document.getElementById('targetTW').value = project.targetTW || '';
+                    document.getElementById('motorThrust').value = project.motorThrust || '';
+                    
+                    // 更新电机数量下拉框
+                    const rotorSelect = document.getElementById('rotorCount');
+                    if ([3, 4, 6, 8].includes(project.rotorCount)) {
+                        rotorSelect.value = String(project.rotorCount);
+                        document.getElementById('customRotorCount').style.display = 'none';
+                    } else {
+                        rotorSelect.value = 'custom';
+                        document.getElementById('customRotorCount').style.display = 'block';
+                        document.getElementById('customRotorCount').value = project.rotorCount;
+                    }
+                }
+                
+                // 恢复项目列表
+                items = scenario.items.map(item => ({ ...item }));
                 renderItems();
                 updateSummary();
                 saveToStorage();
