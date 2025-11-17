@@ -632,6 +632,7 @@
                                     <th>Unit (g) | 单重</th>
                                     <th>Total (g) | 总重</th>
                                     <th>Notes | 备注</th>
+                                    <th style="width: 80px;">Image | 图片</th>
                                     <th>Actions | 操作</th>
                                 </tr>
                             </thead>
@@ -770,6 +771,14 @@
                         <span>Estimation* | 估算值（重量为估算，非实测）</span>
                     </label>
                 </div>
+                <div class="form-group">
+                    <label>Image | 图片</label>
+                    <input type="file" id="itemImageInput" accept="image/*" onchange="handleImageUpload(event)" style="font-size: 11px;">
+                    <div id="itemImagePreview" style="margin-top: 5px; display: none;">
+                        <img id="itemImagePreviewImg" src="" style="max-width: 200px; max-height: 200px; border: 1px solid #C0C0C0; object-fit: contain;">
+                        <button type="button" class="btn btn-danger btn-small" onclick="removeItemImage()" style="margin-top: 5px;">Remove Image</button>
+                    </div>
+                </div>
                 <div class="action-buttons">
                     <button type="submit" class="btn btn-primary">Save | 保存</button>
                     <button type="button" class="btn btn-secondary" onclick="closeItemModal()">Cancel | 取消</button>
@@ -803,6 +812,22 @@
         </div>
     </div>
 
+    <!-- Image View Modal -->
+    <div id="imageViewModal" class="modal">
+        <div class="modal-content" style="max-width: 90%; max-height: 90%;">
+            <div class="modal-header">
+                <h2 id="imageViewTitle">View Image | 查看图片</h2>
+                <button class="modal-close" onclick="closeImageView()">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 20px;">
+                <img id="imageViewImg" src="" style="max-width: 100%; max-height: 70vh; object-fit: contain; border: 1px solid #C0C0C0;">
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-danger" onclick="deleteItemImageFromView()">Delete Image | 删除图片</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Data structure
         let project = {
@@ -823,6 +848,8 @@
         let isSaving = false;  // 是否正在保存
         let groups = [];  // 组列表
         let groupDisplayMode = false;  // 是否启用分组显示模式
+        let currentViewingImageIndex = null;  // 当前正在查看图片的项目索引
+        let currentEditingImage = null;  // 当前正在编辑的图片（base64）
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -920,7 +947,12 @@
             updateCategorySelect();
             updateGroupSelects();
             document.getElementById('itemGroup').value = '';
+            currentEditingImage = null;
+            document.getElementById('itemImageInput').value = '';
+            document.getElementById('itemImagePreview').style.display = 'none';
             document.getElementById('itemModal').classList.add('active');
+            // 添加粘贴事件监听器
+            document.addEventListener('paste', handlePasteImage);
         }
 
         function openEditItemModal(index) {
@@ -952,12 +984,131 @@
             document.getElementById('itemIsEstimation').checked = item.isEstimation || false;
             updateGroupSelects();
             document.getElementById('itemGroup').value = item.group || '';
+            
+            // 处理图片
+            currentEditingImage = item.image || null;
+            document.getElementById('itemImageInput').value = '';
+            if (item.image) {
+                document.getElementById('itemImagePreviewImg').src = item.image;
+                document.getElementById('itemImagePreview').style.display = 'block';
+            } else {
+                document.getElementById('itemImagePreview').style.display = 'none';
+            }
+            
             document.getElementById('itemModal').classList.add('active');
+            // 添加粘贴事件监听器
+            document.addEventListener('paste', handlePasteImage);
         }
 
         function closeItemModal() {
             document.getElementById('itemModal').classList.remove('active');
             editingItemIndex = null;
+            currentEditingImage = null;
+            // 移除粘贴事件监听器
+            document.removeEventListener('paste', handlePasteImage);
+        }
+
+        function handlePasteImage(event) {
+            // 检查模态框是否打开
+            const modal = document.getElementById('itemModal');
+            if (!modal || !modal.classList.contains('active')) {
+                return;
+            }
+            
+            // 检查剪贴板数据
+            const items = event.clipboardData?.items;
+            if (!items) return;
+            
+            // 查找图片数据
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                if (item.type.indexOf('image') !== -1) {
+                    event.preventDefault();
+                    const blob = item.getAsFile();
+                    if (blob) {
+                        // 检查文件大小（限制为 2MB）
+                        if (blob.size > 2 * 1024 * 1024) {
+                            alert('Image file size must be less than 2MB.');
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            currentEditingImage = e.target.result;
+                            document.getElementById('itemImagePreviewImg').src = e.target.result;
+                            document.getElementById('itemImagePreview').style.display = 'block';
+                        };
+                        reader.onerror = function() {
+                            alert('Error reading image from clipboard.');
+                        };
+                        reader.readAsDataURL(blob);
+                    }
+                    return;
+                }
+            }
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // 检查文件类型
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file.');
+                event.target.value = '';
+                return;
+            }
+            
+            // 检查文件大小（限制为 2MB）
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Image file size must be less than 2MB.');
+                event.target.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentEditingImage = e.target.result;  // 保存为 base64
+                document.getElementById('itemImagePreviewImg').src = e.target.result;
+                document.getElementById('itemImagePreview').style.display = 'block';
+            };
+            reader.onerror = function() {
+                alert('Error reading image file.');
+                event.target.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeItemImage() {
+            currentEditingImage = null;
+            document.getElementById('itemImageInput').value = '';
+            document.getElementById('itemImagePreview').style.display = 'none';
+        }
+
+        function viewItemImage(index) {
+            const item = items[index];
+            if (!item.image) return;
+            
+            currentViewingImageIndex = index;
+            document.getElementById('imageViewImg').src = item.image;
+            document.getElementById('imageViewTitle').textContent = `View Image: ${item.name} | 查看图片: ${item.name}`;
+            document.getElementById('imageViewModal').classList.add('active');
+        }
+
+        function closeImageView() {
+            document.getElementById('imageViewModal').classList.remove('active');
+            currentViewingImageIndex = null;
+        }
+
+        function deleteItemImageFromView() {
+            if (currentViewingImageIndex === null) return;
+            
+            if (confirm('Delete this image?')) {
+                items[currentViewingImageIndex].image = null;
+                renderItems();
+                closeImageView();
+                markAsUnsaved();
+            }
         }
 
         function handleCategoryChange() {
@@ -1026,12 +1177,16 @@
             const notes = document.getElementById('itemNotes').value;
             const isEstimation = document.getElementById('itemIsEstimation').checked;
             const group = document.getElementById('itemGroup').value || '';
+            const image = currentEditingImage;  // 使用当前编辑的图片
 
             if (editingItemIndex !== null) {
-                items[editingItemIndex] = { name, category, qty, weightPerUnit, notes, enabled: items[editingItemIndex].enabled, isEstimation, group };
+                items[editingItemIndex] = { name, category, qty, weightPerUnit, notes, enabled: items[editingItemIndex].enabled, isEstimation, group, image };
             } else {
-                items.push({ name, category, qty, weightPerUnit, notes, enabled: true, isEstimation, group });
+                items.push({ name, category, qty, weightPerUnit, notes, enabled: true, isEstimation, group, image });
             }
+            
+            // 清除编辑中的图片
+            currentEditingImage = null;
 
             closeItemModal();
             renderItems();
@@ -1442,7 +1597,7 @@
                     const groupItems = groupedItems[groupName];
                     // 组标题行
                     html += `<tr style="background: #E0E0E0; font-weight: bold;">
-                        <td colspan="9" style="padding: 5px;">
+                        <td colspan="10" style="padding: 5px;">
                             <strong>${groupName}</strong> (${groupItems.length} item${groupItems.length !== 1 ? 's' : ''})
                         </td>
                     </tr>`;
@@ -1464,7 +1619,7 @@
                 // 渲染无组的项目
                 if (noGroupItems.length > 0) {
                     html += `<tr style="background: #E0E0E0; font-weight: bold;">
-                        <td colspan="9" style="padding: 5px;">
+                        <td colspan="10" style="padding: 5px;">
                             <strong>No Group | 无组</strong> (${noGroupItems.length} item${noGroupItems.length !== 1 ? 's' : ''})
                         </td>
                     </tr>`;
@@ -1549,6 +1704,16 @@
                         </td>
                         <td><strong>${total.toFixed(2)}${estimationStar}</strong></td>
                         <td>${item.notes || '-'}</td>
+                        <td style="text-align: center; vertical-align: middle; padding: 2px;">
+                            ${item.image ? `
+                                <img src="${item.image}" 
+                                     onclick="viewItemImage(${index})" 
+                                     style="max-width: 60px; max-height: 60px; cursor: pointer; border: 1px solid #C0C0C0; object-fit: contain;"
+                                     title="Click to view full image">
+                            ` : `
+                                <span style="color: #999; font-size: 10px;">No image</span>
+                            `}
+                        </td>
                         <td>
                             <button class="btn btn-secondary btn-small" onclick="openEditItemModal(${index})">Edit</button>
                             <button class="btn btn-danger btn-small" onclick="deleteItem(${index})">Delete</button>
@@ -1695,8 +1860,8 @@
             }
         }
 
-        function addItem(name, category, qty, weightPerUnit, notes = '', isEstimation = false, group = '') {
-            items.push({ name, category, qty, weightPerUnit, notes, enabled: true, isEstimation, group });
+        function addItem(name, category, qty, weightPerUnit, notes = '', isEstimation = false, group = '', image = null) {
+            items.push({ name, category, qty, weightPerUnit, notes, enabled: true, isEstimation, group, image });
             renderItems();
         }
 
@@ -2081,11 +2246,12 @@
                     }
                 }
                 
-                // 恢复项目列表，确保 isEstimation 和 group 字段存在（向后兼容）
+                // 恢复项目列表，确保 isEstimation、group 和 image 字段存在（向后兼容）
                 items = scenario.items.map(item => ({
                     ...item,
                     isEstimation: item.isEstimation || false,
-                    group: item.group || ''
+                    group: item.group || '',
+                    image: item.image || null
                 }));
                 renderItems();
                 updateSummary();
@@ -2277,15 +2443,16 @@
                         }
                     }
                     if (data.items) {
-                        // 确保所有 items 都有 isEstimation 和 group 字段（向后兼容）
+                        // 确保所有 items 都有 isEstimation、group 和 image 字段（向后兼容）
                         items = data.items.map(item => ({
                             ...item,
                             isEstimation: item.isEstimation || false,
-                            group: item.group || ''
+                            group: item.group || '',
+                            image: item.image || null
                         }));
                     }
                     if (data.scenarios) {
-                        // 确保场景中的 items 也有 isEstimation 和 group 字段（向后兼容）
+                        // 确保场景中的 items 也有 isEstimation、group 和 image 字段（向后兼容）
                         scenarios = {};
                         Object.keys(data.scenarios).forEach(key => {
                             scenarios[key] = {
@@ -2293,7 +2460,8 @@
                                 items: data.scenarios[key].items ? data.scenarios[key].items.map(item => ({
                                     ...item,
                                     isEstimation: item.isEstimation || false,
-                                    group: item.group || ''
+                                    group: item.group || '',
+                                    image: item.image || null
                                 })) : []
                             };
                         });
