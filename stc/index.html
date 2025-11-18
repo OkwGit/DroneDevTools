@@ -861,6 +861,7 @@
         let groupDisplayMode = false;  // 是否启用分组显示模式
         let currentViewingImageIndex = null;  // 当前正在查看图片的项目索引
         let currentEditingImage = null;  // 当前正在编辑的图片（base64）
+        let selectedItemIndices = new Set();  // 选中的项目索引集合
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1667,8 +1668,13 @@
                     const groupItems = groupedItems[groupName];
                     // 组标题行
                     html += `<tr style="background: #E0E0E0; font-weight: bold;">
-                        <td colspan="10" style="padding: 5px;">
+                        <td colspan="9" style="padding: 5px;">
                             <strong>${groupName}</strong> (${groupItems.length} item${groupItems.length !== 1 ? 's' : ''})
+                        </td>
+                        <td style="padding: 5px; text-align: right;">
+                            <button class="btn btn-secondary btn-small" onclick="copyGroup('${groupName.replace(/'/g, "\\'")}')" title="Copy all items in this group | 复制此组中的所有物品">
+                                Copy Group
+                            </button>
                         </td>
                     </tr>`;
                     
@@ -1994,7 +2000,7 @@
             debugHTML += `  Total Items: ${items.length}<br>`;
             debugHTML += `  Enabled Items: ${enabledItems.length}<br>`;
             debugHTML += `  Disabled Items: ${items.length - enabledItems.length}<br>`;
-            debugHTML += `  Selected Items: ${selectedItemIndices.size}<br>`;
+            debugHTML += `  Selected Items: ${selectedItemIndices && selectedItemIndices.size ? selectedItemIndices.size : 0}<br>`;
             debugHTML += `  Items with Images: ${items.filter(item => item.image).length}<br>`;
             debugHTML += `  Estimation Items: ${items.filter(item => item.isEstimation).length}<br>`;
             debugHTML += '</div>';
@@ -2045,8 +2051,12 @@
             try {
                 const saved = localStorage.getItem('droneWeightCalculator');
                 const copied = localStorage.getItem('droneWeightCalculator_copiedItems');
+                const copiedSingle = localStorage.getItem('droneWeightCalculator_copiedSingleItem');
+                const copiedGroup = localStorage.getItem('droneWeightCalculator_copiedGroup');
                 debugHTML += `  Main Data: ${saved ? 'Present (' + (saved.length / 1024).toFixed(2) + ' KB)' : 'Not found'}<br>`;
-                debugHTML += `  Copied Items: ${copied ? 'Present (' + (copied.length / 1024).toFixed(2) + ' KB)' : 'Not found'}<br>`;
+                debugHTML += `  Copied Items (multi): ${copied ? 'Present (' + (copied.length / 1024).toFixed(2) + ' KB)' : 'Not found'}<br>`;
+                debugHTML += `  Copied Single Item: ${copiedSingle ? 'Present (' + (copiedSingle.length / 1024).toFixed(2) + ' KB)' : 'Not found'}<br>`;
+                debugHTML += `  Copied Group: ${copiedGroup ? 'Present (' + (copiedGroup.length / 1024).toFixed(2) + ' KB)' : 'Not found'}<br>`;
                 debugHTML += `  Has Unsaved Changes: ${hasUnsavedChanges}<br>`;
                 debugHTML += `  Is Saving: ${isSaving}<br>`;
             } catch (e) {
@@ -2054,8 +2064,63 @@
             }
             debugHTML += '</div>';
             
+            // Copied Group Info
+            try {
+                const copiedGroupStr = localStorage.getItem('droneWeightCalculator_copiedGroup');
+                if (copiedGroupStr) {
+                    const copiedData = JSON.parse(copiedGroupStr);
+                    if (copiedData && copiedData.items && Array.isArray(copiedData.items)) {
+                        debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Copied Group:</strong><br>';
+                        debugHTML += `  Group Name: ${copiedData.groupName || '(unknown)'}<br>`;
+                        debugHTML += `  Item Count: ${copiedData.items.length}<br>`;
+                        debugHTML += `  Source Project: ${copiedData.sourceProject || 'Unknown'}<br>`;
+                        if (copiedData.copiedAt) {
+                            const copiedDate = new Date(copiedData.copiedAt);
+                            debugHTML += `  Copied At: ${copiedDate.toLocaleString()}<br>`;
+                        }
+                        debugHTML += '</div>';
+                    }
+                }
+            } catch (e) {
+                debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Copied Group:</strong><br>';
+                debugHTML += `  Error reading copied group: ${e.message}<br>`;
+                debugHTML += '</div>';
+            }
+            
+            // Copied Single Item Info
+            try {
+                const copiedSingleStr = localStorage.getItem('droneWeightCalculator_copiedSingleItem');
+                if (copiedSingleStr) {
+                    const copiedData = JSON.parse(copiedSingleStr);
+                    if (copiedData && copiedData.item) {
+                        const item = copiedData.item;
+                        debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Copied Single Item:</strong><br>';
+                        debugHTML += `  Name: ${item.name || '(empty)'}<br>`;
+                        debugHTML += `  Category: ${item.category || '(empty)'}<br>`;
+                        debugHTML += `  Quantity: ${item.qty || 0}<br>`;
+                        debugHTML += `  Weight per Unit: ${item.weightPerUnit ? item.weightPerUnit.toFixed(2) : '0.00'} g<br>`;
+                        debugHTML += `  Total Weight: ${(item.qty * item.weightPerUnit).toFixed(2)} g<br>`;
+                        debugHTML += `  Notes: ${item.notes || '(none)'}<br>`;
+                        debugHTML += `  Enabled: ${item.enabled !== undefined ? item.enabled : 'true'}<br>`;
+                        debugHTML += `  Is Estimation: ${item.isEstimation || false}<br>`;
+                        debugHTML += `  Group: ${item.group || '(no group)'}<br>`;
+                        debugHTML += `  Has Image: ${item.image ? 'Yes' : 'No'}<br>`;
+                        debugHTML += `  Source Project: ${copiedData.sourceProject || 'Unknown'}<br>`;
+                        if (copiedData.copiedAt) {
+                            const copiedDate = new Date(copiedData.copiedAt);
+                            debugHTML += `  Copied At: ${copiedDate.toLocaleString()}<br>`;
+                        }
+                        debugHTML += '</div>';
+                    }
+                }
+            } catch (e) {
+                debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Copied Single Item:</strong><br>';
+                debugHTML += `  Error reading copied item: ${e.message}<br>`;
+                debugHTML += '</div>';
+            }
+            
             // Selection Details
-            if (selectedItemIndices.size > 0) {
+            if (selectedItemIndices && selectedItemIndices.size > 0) {
                 debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Selected Items:</strong><br>';
                 Array.from(selectedItemIndices).sort((a, b) => a - b).forEach(index => {
                     const item = items[index];
@@ -2125,13 +2190,88 @@
 
         function pasteSingleItem() {
             try {
-                const copyDataStr = localStorage.getItem('droneWeightCalculator_copiedSingleItem');
+                // Check for group copy first, then single item copy
+                let copyDataStr = localStorage.getItem('droneWeightCalculator_copiedGroup');
+                let isGroupCopy = false;
+                
                 if (!copyDataStr) {
-                    alert('No item in clipboard. Copy an item first. | 剪贴板中没有物品。请先复制一个物品。');
+                    copyDataStr = localStorage.getItem('droneWeightCalculator_copiedSingleItem');
+                } else {
+                    isGroupCopy = true;
+                }
+                
+                if (!copyDataStr) {
+                    alert('No item or group in clipboard. Copy an item or group first. | 剪贴板中没有物品或组。请先复制一个物品或组。');
                     return;
                 }
 
                 const copyData = JSON.parse(copyDataStr);
+                
+                // Handle group copy
+                if (isGroupCopy || copyData.isGroup) {
+                    if (!copyData.items || !Array.isArray(copyData.items) || copyData.items.length === 0) {
+                        alert('Clipboard data is invalid. | 剪贴板数据无效。');
+                        return;
+                    }
+
+                    const groupName = copyData.groupName || '';
+                    const itemsToPaste = copyData.items;
+                    
+                    // Validate all items
+                    const validItems = [];
+                    for (let i = 0; i < itemsToPaste.length; i++) {
+                        const item = itemsToPaste[i];
+                        if (!item.name || typeof item.name !== 'string' || item.name.trim() === '') continue;
+                        if (typeof item.qty !== 'number' || item.qty <= 0 || !Number.isInteger(item.qty)) continue;
+                        if (typeof item.weightPerUnit !== 'number' || item.weightPerUnit < 0 || isNaN(item.weightPerUnit)) continue;
+                        if (!item.category || typeof item.category !== 'string' || item.category.trim() === '') continue;
+
+                        validItems.push({
+                            name: item.name.trim(),
+                            category: item.category.trim(),
+                            qty: Math.max(1, Math.floor(item.qty)),
+                            weightPerUnit: Math.max(0, parseFloat(item.weightPerUnit)),
+                            notes: (item.notes || '').trim(),
+                            enabled: item.enabled !== undefined ? Boolean(item.enabled) : true,
+                            isEstimation: Boolean(item.isEstimation || false),
+                            group: groupName.trim(),  // Use the stored group name
+                            image: item.image || null
+                        });
+                    }
+
+                    if (validItems.length === 0) {
+                        alert('No valid items to paste. | 没有可粘贴的有效物品。');
+                        return;
+                    }
+
+                    // Add all items to current project
+                    validItems.forEach(item => {
+                        items.push(item);
+                    });
+
+                    // Update groups list if new group was added
+                    if (groupName && groupName.trim() && !groups.includes(groupName.trim())) {
+                        groups.push(groupName.trim());
+                        groups.sort();
+                    }
+
+                    // Refresh UI
+                    renderItems();
+                    updateSummary();
+                    updateGroupSelects();
+                    markAsUnsaved();
+
+                    // Show success message
+                    let message = `Pasted ${validItems.length} item${validItems.length !== 1 ? 's' : ''} from group "${groupName}"`;
+                    if (copyData.sourceProject) {
+                        message += ` from "${copyData.sourceProject}"`;
+                    }
+                    message += '. | 已粘贴组 "' + groupName + '" 中的 ' + validItems.length + ' 个物品';
+                    alert(message);
+                    return;
+                }
+
+                // Handle single item copy (original logic)
                 if (!copyData.item) {
                     alert('Clipboard data is invalid. | 剪贴板数据无效。');
                     return;
@@ -2202,14 +2342,63 @@
             const pasteBtn = document.getElementById('pasteItemBtn');
             if (pasteBtn) {
                 try {
-                    const copyDataStr = localStorage.getItem('droneWeightCalculator_copiedSingleItem');
-                    const hasItem = copyDataStr && copyDataStr.trim() !== '';
+                    const singleItemStr = localStorage.getItem('droneWeightCalculator_copiedSingleItem');
+                    const groupStr = localStorage.getItem('droneWeightCalculator_copiedGroup');
+                    const hasItem = (singleItemStr && singleItemStr.trim() !== '') || (groupStr && groupStr.trim() !== '');
                     pasteBtn.disabled = !hasItem;
                     pasteBtn.style.opacity = hasItem ? '1' : '0.5';
                     pasteBtn.style.cursor = hasItem ? 'pointer' : 'not-allowed';
                 } catch (error) {
                     console.error('Error updating paste item button state:', error);
                 }
+            }
+        }
+
+        // Copy group functionality
+        function copyGroup(groupName) {
+            if (!groupName || groupName.trim() === '') {
+                alert('Invalid group name. | 无效的组名。');
+                return;
+            }
+
+            // Get all items in the group
+            const groupItems = items.filter(item => (item.group || '') === groupName);
+            
+            if (groupItems.length === 0) {
+                alert(`No items found in group "${groupName}". | 组 "${groupName}" 中没有找到物品。`);
+                return;
+            }
+
+            // Create deep copies of all items in the group
+            const itemsToCopy = groupItems.map(item => ({
+                name: item.name,
+                category: item.category,
+                qty: item.qty,
+                weightPerUnit: item.weightPerUnit,
+                notes: item.notes || '',
+                enabled: item.enabled !== undefined ? item.enabled : true,
+                isEstimation: item.isEstimation || false,
+                group: item.group || groupName,  // Ensure group name is preserved
+                image: item.image || null
+            }));
+
+            // Store in localStorage with metadata
+            const copyData = {
+                items: itemsToCopy,
+                groupName: groupName,  // Store the group name separately
+                copiedAt: new Date().toISOString(),
+                sourceProject: currentScenarioName || project.name || 'Unknown',
+                version: '1.0',
+                isGroup: true  // Flag to indicate this is a group copy
+            };
+
+            try {
+                localStorage.setItem('droneWeightCalculator_copiedGroup', JSON.stringify(copyData));
+                updatePasteItemButtonState();  // This will also check for group copies
+                alert(`Copied ${itemsToCopy.length} item${itemsToCopy.length !== 1 ? 's' : ''} from group "${groupName}" to clipboard. | 已复制组 "${groupName}" 中的 ${itemsToCopy.length} 个物品到剪贴板。`);
+            } catch (error) {
+                console.error('Error copying group:', error);
+                alert('Error copying group. The data might be too large. | 复制组时出错。数据可能太大。');
             }
         }
 
