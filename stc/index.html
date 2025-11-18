@@ -618,6 +618,7 @@
                             </label>
                             <button class="btn btn-secondary btn-small" onclick="openGroupManager()" id="groupManagerBtn" style="display: none;">Manage Groups</button>
                             <button class="btn btn-primary btn-small" onclick="openAddItemModal()">+ Add Item</button>
+                            <button class="btn btn-secondary btn-small" onclick="pasteSingleItem()" id="pasteItemBtn" title="Paste copied item | 粘贴复制的物品">Paste Item</button>
                         </div>
                     </h2>
                     <div class="table-container">
@@ -655,7 +656,6 @@
                     <div class="scenario-controls">
                         <button class="btn btn-primary" onclick="saveCurrentScenario()" id="saveBtn">Save</button>
                         <button class="btn btn-secondary" onclick="saveScenarioAs()">Save As...</button>
-                        <button class="btn btn-secondary" onclick="newProject()">New</button>
                         <select id="scenarioSelect" onchange="loadScenario()" style="padding: 2px; border: 2px inset #C0C0C0;">
                             <option value="">Select Project...</option>
                         </select>
@@ -714,6 +714,16 @@
                 <div class="summary-card" id="targetCard" style="display:none;">
                     <h3>Target Comparison | 目标对比</h3>
                     <div id="targetComparison"></div>
+                </div>
+
+                <div class="summary-card" id="debugCard">
+                    <h3 style="cursor: pointer; user-select: none;" onclick="toggleDebugInfo()">
+                        Debug Info | 调试信息 
+                        <span id="debugToggle" style="font-size: 9px; color: #666;">▼</span>
+                    </h3>
+                    <div id="debugInfo" style="display: none; font-family: monospace; font-size: 9px; max-height: 400px; overflow-y: auto; background: #F0F0F0; padding: 5px; border: 1px solid #C0C0C0;">
+                        <div id="debugContent"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -886,6 +896,8 @@
             // 启动自动保存（每3秒）
             startAutosave();
             updateSaveStatus();
+            updateDebugInfo();  // Initialize debug info
+            updatePasteItemButtonState();  // Check if there's a copied item to paste
         });
 
         function setupEventListeners() {
@@ -1774,6 +1786,7 @@
                         </td>
                         <td>
                             <button class="btn btn-secondary btn-small" onclick="openEditItemModal(${index})">Edit</button>
+                            <button class="btn btn-secondary btn-small" onclick="copySingleItem(${index})" title="Copy this item | 复制此物品">Copy</button>
                             <button class="btn btn-danger btn-small" onclick="deleteItem(${index})">Delete</button>
                         </td>
                     </tr>
@@ -1916,11 +1929,288 @@
             } else {
                 document.getElementById('targetCard').style.display = 'none';
             }
+            
+            // Update debug info
+            updateDebugInfo();
+        }
+
+        function toggleDebugInfo() {
+            const debugInfo = document.getElementById('debugInfo');
+            const debugToggle = document.getElementById('debugToggle');
+            if (debugInfo.style.display === 'none') {
+                debugInfo.style.display = 'block';
+                debugToggle.textContent = '▲';
+                updateDebugInfo();
+            } else {
+                debugInfo.style.display = 'none';
+                debugToggle.textContent = '▼';
+            }
+        }
+
+        function updateDebugInfo() {
+            const debugContent = document.getElementById('debugContent');
+            if (!debugContent) return;
+            
+            const enabledItems = items.filter(item => item.enabled);
+            const totalWeightG = enabledItems.reduce((sum, item) => sum + (item.qty * item.weightPerUnit), 0);
+            const totalWeightKg = totalWeightG / 1000;
+            
+            let debugHTML = '<div style="line-height: 1.4;">';
+            
+            // Project Info
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Project Info:</strong><br>';
+            debugHTML += `  Name: ${project.name || '(empty)'}<br>`;
+            debugHTML += `  Description: ${project.description || '(empty)'}<br>`;
+            debugHTML += `  Rotor Count: ${project.rotorCount}<br>`;
+            debugHTML += `  Target AUW: ${project.targetAUW || 'null'}<br>`;
+            debugHTML += `  Target T/W: ${project.targetTW || 'null'}<br>`;
+            debugHTML += `  Motor Thrust: ${project.motorThrust || 'null'}<br>`;
+            debugHTML += `  Current Scenario: ${currentScenarioName || 'null'}<br>`;
+            debugHTML += '</div>';
+            
+            // Weight Calculations
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Weight Calculations:</strong><br>';
+            debugHTML += `  Total Weight (g): ${totalWeightG.toFixed(2)}<br>`;
+            debugHTML += `  Total Weight (kg): ${totalWeightKg.toFixed(3)}<br>`;
+            if (project.rotorCount > 0) {
+                const weightPerMotor = totalWeightKg / project.rotorCount;
+                debugHTML += `  Weight per Motor (kg): ${weightPerMotor.toFixed(4)}<br>`;
+            }
+            if (project.motorThrust && project.rotorCount > 0) {
+                const totalThrust = project.motorThrust * project.rotorCount;
+                const currentTW = totalThrust / totalWeightG;
+                debugHTML += `  Total Thrust (g): ${totalThrust.toFixed(2)}<br>`;
+                debugHTML += `  Current T/W: ${currentTW.toFixed(2)}<br>`;
+                if (project.targetTW) {
+                    debugHTML += `  Target T/W: ${project.targetTW.toFixed(2)}<br>`;
+                    const diff = currentTW - project.targetTW;
+                    debugHTML += `  T/W Diff: ${diff > 0 ? '+' : ''}${diff.toFixed(2)}<br>`;
+                }
+            }
+            debugHTML += '</div>';
+            
+            // Items Summary
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Items Summary:</strong><br>';
+            debugHTML += `  Total Items: ${items.length}<br>`;
+            debugHTML += `  Enabled Items: ${enabledItems.length}<br>`;
+            debugHTML += `  Disabled Items: ${items.length - enabledItems.length}<br>`;
+            debugHTML += `  Selected Items: ${selectedItemIndices.size}<br>`;
+            debugHTML += `  Items with Images: ${items.filter(item => item.image).length}<br>`;
+            debugHTML += `  Estimation Items: ${items.filter(item => item.isEstimation).length}<br>`;
+            debugHTML += '</div>';
+            
+            // Groups Info
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Groups:</strong><br>';
+            debugHTML += `  Total Groups: ${groups.length}<br>`;
+            if (groups.length > 0) {
+                debugHTML += `  Groups: ${groups.join(', ')}<br>`;
+            }
+            const itemsByGroup = {};
+            items.forEach(item => {
+                const group = item.group || '(no group)';
+                itemsByGroup[group] = (itemsByGroup[group] || 0) + 1;
+            });
+            debugHTML += `  Items by Group:<br>`;
+            Object.entries(itemsByGroup).forEach(([group, count]) => {
+                debugHTML += `    ${group}: ${count}<br>`;
+            });
+            debugHTML += '</div>';
+            
+            // Scenarios Info
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Scenarios:</strong><br>';
+            debugHTML += `  Total Scenarios: ${Object.keys(scenarios).length}<br>`;
+            if (Object.keys(scenarios).length > 0) {
+                debugHTML += `  Scenario Names: ${Object.keys(scenarios).join(', ')}<br>`;
+            }
+            debugHTML += '</div>';
+            
+            // Category Breakdown
+            const categoryBreakdown = {};
+            enabledItems.forEach(item => {
+                const category = item.category;
+                if (!categoryBreakdown[category]) {
+                    categoryBreakdown[category] = { count: 0, weight: 0 };
+                }
+                categoryBreakdown[category].count += 1;
+                categoryBreakdown[category].weight += item.qty * item.weightPerUnit;
+            });
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Category Breakdown:</strong><br>';
+            Object.entries(categoryBreakdown).forEach(([cat, data]) => {
+                debugHTML += `  ${cat}: ${data.count} items, ${data.weight.toFixed(2)}g<br>`;
+            });
+            debugHTML += '</div>';
+            
+            // Storage Info
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Storage:</strong><br>';
+            try {
+                const saved = localStorage.getItem('droneWeightCalculator');
+                const copied = localStorage.getItem('droneWeightCalculator_copiedItems');
+                debugHTML += `  Main Data: ${saved ? 'Present (' + (saved.length / 1024).toFixed(2) + ' KB)' : 'Not found'}<br>`;
+                debugHTML += `  Copied Items: ${copied ? 'Present (' + (copied.length / 1024).toFixed(2) + ' KB)' : 'Not found'}<br>`;
+                debugHTML += `  Has Unsaved Changes: ${hasUnsavedChanges}<br>`;
+                debugHTML += `  Is Saving: ${isSaving}<br>`;
+            } catch (e) {
+                debugHTML += `  Error accessing storage: ${e.message}<br>`;
+            }
+            debugHTML += '</div>';
+            
+            // Selection Details
+            if (selectedItemIndices.size > 0) {
+                debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Selected Items:</strong><br>';
+                Array.from(selectedItemIndices).sort((a, b) => a - b).forEach(index => {
+                    const item = items[index];
+                    if (item) {
+                        debugHTML += `  [${index}] ${item.name} (${item.qty}x ${item.weightPerUnit}g)<br>`;
+                    }
+                });
+                debugHTML += '</div>';
+            }
+            
+            // Raw Items Data (first 5 items)
+            debugHTML += '<div style="margin-bottom: 8px;"><strong>Items Data (first 5):</strong><br>';
+            items.slice(0, 5).forEach((item, index) => {
+                debugHTML += `  [${index}] ${JSON.stringify(item).substring(0, 80)}...<br>`;
+            });
+            if (items.length > 5) {
+                debugHTML += `  ... and ${items.length - 5} more items<br>`;
+            }
+            debugHTML += '</div>';
+            
+            debugHTML += '</div>';
+            debugContent.innerHTML = debugHTML;
         }
 
         function addItem(name, category, qty, weightPerUnit, notes = '', isEstimation = false, group = '', image = null) {
             items.push({ name, category, qty, weightPerUnit, notes, enabled: true, isEstimation, group, image });
             renderItems();
+        }
+
+        // Single item copy/paste functionality
+        function copySingleItem(index) {
+            if (index < 0 || index >= items.length) {
+                alert('Invalid item index. | 无效的物品索引。');
+                return;
+            }
+
+            const item = items[index];
+            // Create a deep copy of the item
+            const itemCopy = {
+                name: item.name,
+                category: item.category,
+                qty: item.qty,
+                weightPerUnit: item.weightPerUnit,
+                notes: item.notes || '',
+                enabled: item.enabled !== undefined ? item.enabled : true,
+                isEstimation: item.isEstimation || false,
+                group: item.group || '',
+                image: item.image || null
+            };
+
+            // Store in localStorage with metadata
+            const copyData = {
+                item: itemCopy,
+                copiedAt: new Date().toISOString(),
+                sourceProject: currentScenarioName || project.name || 'Unknown',
+                version: '1.0'
+            };
+
+            try {
+                localStorage.setItem('droneWeightCalculator_copiedSingleItem', JSON.stringify(copyData));
+                updatePasteItemButtonState();
+            } catch (error) {
+                console.error('Error copying item:', error);
+                alert('Error copying item. | 复制物品时出错。');
+            }
+        }
+
+        function pasteSingleItem() {
+            try {
+                const copyDataStr = localStorage.getItem('droneWeightCalculator_copiedSingleItem');
+                if (!copyDataStr) {
+                    alert('No item in clipboard. Copy an item first. | 剪贴板中没有物品。请先复制一个物品。');
+                    return;
+                }
+
+                const copyData = JSON.parse(copyDataStr);
+                if (!copyData.item) {
+                    alert('Clipboard data is invalid. | 剪贴板数据无效。');
+                    return;
+                }
+
+                const item = copyData.item;
+
+                // Validate required fields
+                if (!item.name || typeof item.name !== 'string' || item.name.trim() === '') {
+                    alert('Invalid item data: missing or invalid name. | 无效的物品数据：缺少或无效的名称。');
+                    return;
+                }
+                if (typeof item.qty !== 'number' || item.qty <= 0 || !Number.isInteger(item.qty)) {
+                    alert('Invalid item data: invalid quantity. | 无效的物品数据：无效的数量。');
+                    return;
+                }
+                if (typeof item.weightPerUnit !== 'number' || item.weightPerUnit < 0 || isNaN(item.weightPerUnit)) {
+                    alert('Invalid item data: invalid weight. | 无效的物品数据：无效的重量。');
+                    return;
+                }
+                if (!item.category || typeof item.category !== 'string' || item.category.trim() === '') {
+                    alert('Invalid item data: missing or invalid category. | 无效的物品数据：缺少或无效的分类。');
+                    return;
+                }
+
+                // Create a clean item object
+                const newItem = {
+                    name: item.name.trim(),
+                    category: item.category.trim(),
+                    qty: Math.max(1, Math.floor(item.qty)),
+                    weightPerUnit: Math.max(0, parseFloat(item.weightPerUnit)),
+                    notes: (item.notes || '').trim(),
+                    enabled: item.enabled !== undefined ? Boolean(item.enabled) : true,
+                    isEstimation: Boolean(item.isEstimation || false),
+                    group: (item.group || '').trim(),
+                    image: item.image || null
+                };
+
+                // Add item to current project
+                items.push(newItem);
+
+                // Update groups list if new group was added
+                if (newItem.group && newItem.group.trim() && !groups.includes(newItem.group)) {
+                    groups.push(newItem.group);
+                    groups.sort();
+                }
+
+                // Refresh UI
+                renderItems();
+                updateSummary();
+                updateGroupSelects();
+                markAsUnsaved();
+
+                // Show success message
+                let message = `Pasted "${newItem.name}"`;
+                if (copyData.sourceProject) {
+                    message += ` from "${copyData.sourceProject}"`;
+                }
+                message += '. | 已粘贴 "' + newItem.name + '"';
+                alert(message);
+            } catch (error) {
+                console.error('Error pasting item:', error);
+                alert('Error pasting item. The clipboard data might be corrupted. | 粘贴物品时出错。剪贴板数据可能已损坏。');
+            }
+        }
+
+        function updatePasteItemButtonState() {
+            const pasteBtn = document.getElementById('pasteItemBtn');
+            if (pasteBtn) {
+                try {
+                    const copyDataStr = localStorage.getItem('droneWeightCalculator_copiedSingleItem');
+                    const hasItem = copyDataStr && copyDataStr.trim() !== '';
+                    pasteBtn.disabled = !hasItem;
+                    pasteBtn.style.opacity = hasItem ? '1' : '0.5';
+                    pasteBtn.style.cursor = hasItem ? 'pointer' : 'not-allowed';
+                } catch (error) {
+                    console.error('Error updating paste item button state:', error);
+                }
+            }
         }
 
         function exportTXT() {
@@ -2081,103 +2371,6 @@
                 }
             };
             input.click();
-        }
-
-        function newProject() {
-            // 如果有项目名称且有未保存的更改，先保存当前项目
-            if (project.name && project.name.trim()) {
-                if (hasUnsavedChanges) {
-                    // 静默保存，不显示弹窗
-                    const scenarioName = project.name.trim();
-                    if (currentScenarioName && scenarios[currentScenarioName]) {
-                        if (currentScenarioName !== scenarioName) {
-                            renameScenario(currentScenarioName, scenarioName);
-                        } else {
-                            scenarios[scenarioName] = {
-                                name: scenarioName,
-                                project: { ...project },
-                                items: items.map(item => ({ ...item })),
-                                savedAt: new Date().toISOString()
-                            };
-                            updateScenarioSelect();
-                            saveToStorage();
-                            hasUnsavedChanges = false;
-                            updateSaveStatus();
-                        }
-                    } else if (!scenarios[scenarioName]) {
-                        // 如果场景不存在，创建新场景
-                        scenarios[scenarioName] = {
-                            name: scenarioName,
-                            project: { ...project },
-                            items: items.map(item => ({ ...item })),
-                            savedAt: new Date().toISOString()
-                        };
-                        currentScenarioName = scenarioName;
-                        updateScenarioSelect();
-                        saveToStorage();
-                        hasUnsavedChanges = false;
-                        updateSaveStatus();
-                    } else {
-                        // 场景已存在，静默覆盖
-                        scenarios[scenarioName] = {
-                            name: scenarioName,
-                            project: { ...project },
-                            items: items.map(item => ({ ...item })),
-                            savedAt: new Date().toISOString()
-                        };
-                        currentScenarioName = scenarioName;
-                        updateScenarioSelect();
-                        saveToStorage();
-                        hasUnsavedChanges = false;
-                        updateSaveStatus();
-                    }
-                }
-            }
-            
-            // 创建新的空白项目
-            project = {
-                name: '',
-                description: '',
-                rotorCount: 4,
-                targetAUW: null,
-                targetTW: 3.0,
-                motorThrust: 1400
-            };
-            
-            items = [];
-            currentScenarioName = null;
-            
-            // 更新UI
-            document.getElementById('projectName').value = '';
-            document.getElementById('projectDescription').value = '';
-            document.getElementById('targetAUW').value = '';
-            document.getElementById('targetTW').value = '3.0';
-            document.getElementById('motorThrust').value = '1400';
-            
-            // 更新电机数量下拉框
-            const rotorSelect = document.getElementById('rotorCount');
-            rotorSelect.value = '4';
-            document.getElementById('customRotorCount').style.display = 'none';
-            
-            // 更新场景选择
-            document.getElementById('scenarioSelect').value = '';
-            updateScenarioSelect();
-            updateCurrentScenarioInfo();
-            document.getElementById('deleteScenarioBtn').style.display = 'none';
-            
-            // 渲染项目列表
-            renderItems();
-            updateSummary();
-            
-            // 标记为已保存（因为是新项目）
-            hasUnsavedChanges = false;
-            updateSaveStatus();
-            
-            // 保存到存储
-            saveToStorage();
-            
-            // 聚焦到项目名称输入框
-            document.getElementById('projectName').focus();
         }
 
         function saveCurrentScenario() {
