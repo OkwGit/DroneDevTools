@@ -1,0 +1,3037 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Weight Calculator | 无人机重量计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', Tahoma, Arial, sans-serif;
+            background: #C0C0C0;
+            min-height: 100vh;
+            padding: 10px;
+            color: #000000;
+            font-size: 11px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #C0C0C0;
+            border: 2px solid #808080;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #808080;
+            border-bottom: 2px solid #808080;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #0054E3;
+            color: #FFFFFF;
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #000080;
+            background-image: linear-gradient(to bottom, #0054E3 0%, #0040C0 100%);
+        }
+
+        .header h1 {
+            font-size: 13px;
+            margin: 0;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .header p {
+            font-size: 10px;
+            margin: 2px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .project-settings {
+            background: #C0C0C0;
+            padding: 8px;
+            border: 1px solid #808080;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            margin-bottom: 8px;
+        }
+
+        .project-settings h2 {
+            margin-bottom: 8px;
+            color: #000000;
+            font-size: 11px;
+            font-weight: bold;
+            border-bottom: 1px solid #808080;
+            padding-bottom: 3px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: normal;
+            color: #000000;
+            font-size: 11px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 3px;
+            border: 2px inset #C0C0C0;
+            font-size: 11px;
+            background: #FFFFFF;
+            font-family: 'MS Sans Serif', Tahoma, Arial, sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: 1px dotted #000000;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn {
+            padding: 2px 12px;
+            border: 1px outset #C0C0C0;
+            border-top-color: #FFFFFF;
+            border-left-color: #FFFFFF;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            font-size: 11px;
+            font-weight: normal;
+            cursor: pointer;
+            display: inline-block;
+            background: #C0C0C0;
+            color: #000000;
+            font-family: 'MS Sans Serif', Tahoma, Arial, sans-serif;
+            min-height: 21px;
+        }
+
+        .btn:active {
+            border: 1px inset #C0C0C0;
+            border-top-color: #808080;
+            border-left-color: #808080;
+            border-right-color: #FFFFFF;
+            border-bottom-color: #FFFFFF;
+        }
+
+        .btn-primary {
+            background: #316AC5;
+            color: #FFFFFF;
+            border: 1px outset #316AC5;
+            border-top-color: #6B9DFF;
+            border-left-color: #6B9DFF;
+            border-right-color: #004080;
+            border-bottom-color: #004080;
+        }
+
+        .btn-primary:active {
+            border: 1px inset #316AC5;
+            border-top-color: #004080;
+            border-left-color: #004080;
+            border-right-color: #6B9DFF;
+            border-bottom-color: #6B9DFF;
+        }
+
+        .btn-success {
+            background: #00C000;
+            color: #FFFFFF;
+            border: 1px outset #00C000;
+            border-top-color: #40FF40;
+            border-left-color: #40FF40;
+            border-right-color: #008000;
+            border-bottom-color: #008000;
+        }
+
+        .btn-success:active {
+            border: 1px inset #00C000;
+            border-top-color: #008000;
+            border-left-color: #008000;
+            border-right-color: #40FF40;
+            border-bottom-color: #40FF40;
+        }
+
+        .btn-danger {
+            background: #C00000;
+            color: #FFFFFF;
+            border: 1px outset #C00000;
+            border-top-color: #FF4040;
+            border-left-color: #FF4040;
+            border-right-color: #800000;
+            border-bottom-color: #800000;
+        }
+
+        .btn-danger:active {
+            border: 1px inset #C00000;
+            border-top-color: #800000;
+            border-left-color: #800000;
+            border-right-color: #FF4040;
+            border-bottom-color: #FF4040;
+        }
+
+        .btn-secondary {
+            background: #C0C0C0;
+            color: #000000;
+            border: 1px outset #C0C0C0;
+            border-top-color: #FFFFFF;
+            border-left-color: #FFFFFF;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+        }
+
+        .btn-secondary:active {
+            border: 1px inset #C0C0C0;
+            border-top-color: #808080;
+            border-left-color: #808080;
+            border-right-color: #FFFFFF;
+            border-bottom-color: #FFFFFF;
+        }
+
+        .btn-small {
+            padding: 2px 8px;
+            font-size: 11px;
+        }
+
+        .items-section {
+            background: #C0C0C0;
+        }
+
+        .items-section h2 {
+            margin-bottom: 8px;
+            color: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: bold;
+            border-bottom: 1px solid #808080;
+            padding-bottom: 3px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid #808080;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #FFFFFF;
+        }
+
+        thead {
+            background: #C0C0C0;
+        }
+
+        th {
+            padding: 3px 6px;
+            text-align: left;
+            font-weight: bold;
+            color: #000000;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+            font-size: 11px;
+            background: #C0C0C0;
+        }
+
+        th:last-child {
+            border-right: none;
+        }
+
+        td {
+            padding: 3px 6px;
+            border-right: 1px solid #C0C0C0;
+            border-bottom: 1px solid #C0C0C0;
+            font-size: 11px;
+        }
+
+        td:last-child {
+            border-right: none;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #F0F0F0;
+        }
+
+        .checkbox-cell {
+            text-align: center;
+        }
+
+        input[type="checkbox"] {
+            width: 13px;
+            height: 13px;
+            cursor: pointer;
+        }
+
+        .summary-panel {
+            background: #C0C0C0;
+            padding: 8px;
+            border: 1px solid #808080;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            position: sticky;
+            top: 8px;
+            max-height: calc(100vh - 16px);
+            overflow-y: auto;
+        }
+
+        .summary-panel h2 {
+            margin-bottom: 8px;
+            color: #000000;
+            font-size: 11px;
+            font-weight: bold;
+            border-bottom: 1px solid #808080;
+            padding-bottom: 3px;
+        }
+
+        .summary-card {
+            background: #FFFFFF;
+            padding: 6px;
+            border: 1px solid #808080;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            margin-bottom: 8px;
+        }
+
+        .summary-card h3 {
+            font-size: 11px;
+            color: #000000;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .summary-card .value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        .summary-card .sub-value {
+            font-size: 11px;
+            color: #000000;
+            margin-top: 3px;
+        }
+
+        .category-list {
+            list-style: none;
+        }
+
+        .category-list li {
+            padding: 4px 0;
+            border-bottom: 1px solid #C0C0C0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+        }
+
+        .category-list li:last-child {
+            border-bottom: none;
+        }
+
+        .tw-indicator {
+            display: inline-block;
+            padding: 2px 6px;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1px solid #000000;
+        }
+
+        .tw-safe {
+            background: #C0FFC0;
+            color: #000000;
+        }
+
+        .tw-warning {
+            background: #FFFFC0;
+            color: #000000;
+        }
+
+        .tw-danger {
+            background: #FFC0C0;
+            color: #000000;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #C0C0C0;
+            padding: 8px;
+            border: 2px outset #C0C0C0;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #808080;
+            border-bottom: 2px solid #808080;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: -8px -8px 8px -8px;
+            background: #0054E3;
+            background-image: linear-gradient(to bottom, #0054E3 0%, #0040C0 100%);
+            color: #FFFFFF;
+            padding: 4px 8px;
+            border-bottom: 1px solid #000080;
+        }
+
+        .modal-header h2 {
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: #C0C0C0;
+            border: 1px outset #C0C0C0;
+            border-top-color: #FFFFFF;
+            border-left-color: #FFFFFF;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            font-size: 12px;
+            cursor: pointer;
+            color: #000000;
+            padding: 1px 4px;
+            font-family: 'MS Sans Serif', Tahoma, Arial, sans-serif;
+            min-width: 18px;
+            min-height: 18px;
+        }
+
+        .close-btn:active {
+            border: 1px inset #C0C0C0;
+            border-top-color: #808080;
+            border-left-color: #808080;
+            border-right-color: #FFFFFF;
+            border-bottom-color: #FFFFFF;
+        }
+
+        .scenario-section {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #808080;
+        }
+        
+        .scenario-section h2 {
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            border-bottom: 1px solid #808080;
+            padding-bottom: 3px;
+        }
+
+        .scenario-controls {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #808080;
+        }
+
+        .empty-state svg {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 14px;
+            }
+
+            table {
+                font-size: 10px;
+            }
+
+            th, td {
+                padding: 3px;
+            }
+
+            .btn {
+                padding: 2px 10px;
+                font-size: 10px;
+            }
+        }
+
+        .input-number {
+            width: 80px;
+            padding: 3px;
+            border: 2px inset #C0C0C0;
+        }
+
+        select {
+            background: #FFFFFF;
+            border: 2px inset #C0C0C0;
+            padding: 2px;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Hide number input spinners */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Drone Weight Calculator</h1>
+            <p>重量预算管理工具 </p>
+        </div>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <!-- Project Settings -->
+                <div class="project-settings">
+                    <h2>Project Settings |</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Project Name | 项目名称</label>
+                            <input type="text" id="projectName" placeholder="e.g., F550-RTK-Flash-v1" value="F550-RTK-Flash-v1">
+                        </div>
+                        <div class="form-group">
+                            <label>Rotors | 电机数量</label>
+                            <select id="rotorCount">
+                                <option value="3">Tri (3)</option>
+                                <option value="4" selected>Quad (4)</option>
+                                <option value="6">Hexa (6)</option>
+                                <option value="8">Octo (8)</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                            <input type="number" id="customRotorCount" placeholder="Custom count" style="display:none; margin-top:5px;" min="1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description | 描述</label>
+                        <textarea id="projectDescription" rows="2" placeholder="e.g., RTK follow-me lighting drone based on DJI F550 frame">RTK follow-me lighting drone based on DJI F550 frame</textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Target AUW (g) | 目标总重 (可选)</label>
+                            <input type="number" id="targetAUW" placeholder="Optional" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Target T/W Ratio | 目标推重比 (可选)</label>
+                            <input type="number" id="targetTW" placeholder="e.g., 3.0" step="0.1" min="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Motor Max Thrust (g) | 单电机最大推力 (可选)</label>
+                            <input type="number" id="motorThrust" placeholder="e.g., 1400" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Items Section -->
+                <div class="items-section">
+                    <h2>
+                        <span>Items | 组件清单</span>
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            <label style="display: flex; align-items: center; gap: 3px; font-size: 11px; font-weight: normal; cursor: pointer;">
+                                <input type="checkbox" id="groupDisplayToggle" onchange="toggleGroupDisplay()" style="width: 13px; height: 13px; cursor: pointer;">
+                                <span>Group Display | 分组显示</span>
+                            </label>
+                            <button class="btn btn-secondary btn-small" onclick="openGroupManager()" id="groupManagerBtn" style="display: none;">Manage Groups</button>
+                            <button class="btn btn-primary btn-small" onclick="openAddItemModal()">+ Add Item</button>
+                            <button class="btn btn-secondary btn-small" onclick="pasteSingleItem()" id="pasteItemBtn" title="Paste copied item | 粘贴复制的物品">Paste Item</button>
+                        </div>
+                    </h2>
+                    <div class="table-container">
+                        <table id="itemsTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">Move</th>
+                                    <th>Enabled</th>
+                                    <th>Group | 组</th>
+                                    <th>Name | 名称</th>
+                                    <th>Qty | 数量</th>
+                                    <th>Unit (g) | 单重</th>
+                                    <th>Total (g) | 总重</th>
+                                    <th>Notes | 备注</th>
+                                    <th style="width: 80px;">Image | 图片</th>
+                                    <th>Actions | 操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="itemsTableBody">
+                                <!-- Items will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="emptyState" class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                        <p>No items yet. Click "Add Item" to get started.</p>
+                    </div>
+                </div>
+
+                <!-- Scenario Section -->
+                <div class="scenario-section">
+                    <h2>SAVES</h2>
+                    <div class="scenario-controls">
+                        <button class="btn btn-primary" onclick="saveCurrentScenario()" id="saveBtn">Save</button>
+                        <button class="btn btn-secondary" onclick="saveScenarioAs()">Save As...</button>
+                        <select id="scenarioSelect" onchange="loadScenario()" style="padding: 2px; border: 2px inset #C0C0C0;">
+                            <option value="">Select Project...</option>
+                        </select>
+                        <button class="btn btn-danger btn-small" onclick="deleteScenario()" id="deleteScenarioBtn" style="display:none;">Delete</button>
+                    </div>
+                    <div id="currentScenarioInfo" style="font-size: 10px; color: #666; margin-top: 5px; font-style: italic;"></div>
+                    <div id="saveStatus" style="font-size: 10px; margin-top: 5px; display: flex; align-items: center; gap: 5px;">
+                        <span id="saveStatusIcon" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #00C000;"></span>
+                        <span id="saveStatusText">All changes saved</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="exportTXT()">Export TXT</button>
+                    <button class="btn btn-secondary" onclick="exportJSON()">Export JSON</button>
+                    <button class="btn btn-secondary" onclick="importJSON()">Import JSON</button>
+                    <button class="btn btn-secondary" onclick="clearAll()">Clear All</button>
+                </div>
+            </div>
+
+            <!-- Summary Panel -->
+            <div class="summary-panel">
+                <h2>Summary | 汇总</h2>
+                
+                <div class="summary-card">
+                    <h3>Total Weight | 总重量</h3>
+                    <div class="sub-value" id="totalWeightFormula" style="font-family: monospace; font-size: 10px; margin-bottom: 5px;"></div>
+                    <div class="value" id="totalWeightG">0 g</div>
+                    <div class="sub-value" id="totalWeightKg">0.000 kg</div>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Weight per Motor | 每电机负载</h3>
+                    <div class="sub-value" id="weightPerMotorFormula" style="font-family: monospace; font-size: 10px; margin-bottom: 5px;"></div>
+                    <div class="value" id="weightPerMotor">0.000 kg</div>
+                </div>
+
+                <div class="summary-card" id="twCard" style="display:none;">
+                    <h3>Thrust-to-Weight Ratio | 推重比</h3>
+                    <div class="sub-value" id="twFormula" style="font-family: monospace; font-size: 10px; margin-bottom: 5px;"></div>
+                    <div class="value">
+                        <span id="twRatio">-</span>
+                        <span class="tw-indicator" id="twIndicator"></span>
+                    </div>
+                    <div class="sub-value" id="twDetails"></div>
+                </div>
+
+                <div class="summary-card">
+                    <h3>By Category | 分类统计</h3>
+                    <ul class="category-list" id="categoryBreakdown">
+                        <!-- Will be populated by JS -->
+                    </ul>
+                </div>
+
+                <div class="summary-card" id="targetCard" style="display:none;">
+                    <h3>Target Comparison | 目标对比</h3>
+                    <div id="targetComparison"></div>
+                </div>
+
+                <div class="summary-card" id="debugCard">
+                    <h3 style="cursor: pointer; user-select: none;" onclick="toggleDebugInfo()">
+                        Debug Info | 调试信息 
+                        <span id="debugToggle" style="font-size: 9px; color: #666;">▼</span>
+                    </h3>
+                    <div id="debugInfo" style="display: none; font-family: monospace; font-size: 9px; max-height: 400px; overflow-y: auto; background: #F0F0F0; padding: 5px; border: 1px solid #C0C0C0;">
+                        <div id="debugContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Item Modal -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Item | 添加物品</h2>
+                <button class="close-btn" onclick="closeItemModal()">&times;</button>
+            </div>
+            <form id="itemForm" onsubmit="saveItem(event)">
+                <div class="form-group">
+                    <label>Name | 名称 *</label>
+                    <input type="text" id="itemName" required>
+                </div>
+                <div class="form-group">
+                    <label>Category | 分类 *</label>
+                    <select id="itemCategory" required onchange="handleCategoryChange()">
+                        <option value="Frame">Frame | 机架</option>
+                        <option value="Motor">Motor | 电机</option>
+                        <option value="ESC">ESC | 电调</option>
+                        <option value="Battery">Battery | 电池</option>
+                        <option value="Electronics">Electronics | 电子设备</option>
+                        <option value="Payload">Payload | 载荷</option>
+                        <option value="Misc">Misc | 其他</option>
+                        <option value="__custom__">Custom | 自定义</option>
+                    </select>
+                    <input type="text" id="itemCategoryCustom" placeholder="Enter custom category" style="display:none; margin-top:3px; width:100%; padding:3px; border:2px inset #C0C0C0; font-size:11px;">
+                </div>
+                <div class="form-group">
+                    <label>Group | 组（可选）</label>
+                    <select id="itemGroup" style="padding: 2px; border: 2px inset #C0C0C0;">
+                        <option value="">No Group | 无组</option>
+                    </select>
+                    <button type="button" class="btn btn-secondary btn-small" onclick="openGroupManager()" style="margin-top: 3px;">Manage Groups</button>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Quantity | 数量 *</label>
+                        <input type="number" id="itemQty" required min="1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Unit Weight (g) | 单件重量 (g) *</label>
+                        <input type="number" id="itemWeight" required min="0" step="0.01">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Notes | 备注</label>
+                    <textarea id="itemNotes" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                        <input type="checkbox" id="itemIsEstimation" style="width: 13px; height: 13px; cursor: pointer;">
+                        <span>Estimation* | 估算值（重量为估算，非实测）</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Image | 图片</label>
+                    <input type="file" id="itemImageInput" accept="image/*" onchange="handleImageUpload(event)" style="font-size: 11px;">
+                    <div id="itemImagePreview" style="margin-top: 5px; display: none;">
+                        <img id="itemImagePreviewImg" src="" style="max-width: 200px; max-height: 200px; border: 1px solid #C0C0C0; object-fit: contain;">
+                        <button type="button" class="btn btn-danger btn-small" onclick="removeItemImage()" style="margin-top: 5px;">Remove Image</button>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Save | 保存</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeItemModal()">Cancel | 取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Group Manager Modal -->
+    <div id="groupManagerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Manage Groups | 管理组</h2>
+                <button class="modal-close" onclick="closeGroupManager()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Create New Group | 创建新组</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="text" id="newGroupName" placeholder="Enter group name" style="flex: 1; padding: 3px; border: 2px inset #C0C0C0;">
+                        <button class="btn btn-primary" onclick="createGroup()">Create | 创建</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Existing Groups | 现有组</label>
+                    <div id="groupsList" style="max-height: 200px; overflow-y: auto; border: 2px inset #C0C0C0; padding: 5px; background: #FFFFFF;">
+                        <!-- Groups will be listed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image View Modal -->
+    <div id="imageViewModal" class="modal">
+        <div class="modal-content" style="max-width: 90%; max-height: 90%;">
+            <div class="modal-header">
+                <h2 id="imageViewTitle">View Image | 查看图片</h2>
+                <button class="modal-close" onclick="closeImageView()">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 20px;">
+                <img id="imageViewImg" src="" style="max-width: 100%; max-height: 70vh; object-fit: contain; border: 1px solid #C0C0C0;">
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-danger" onclick="deleteItemImageFromView()">Delete Image | 删除图片</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data structure
+        let project = {
+            name: 'F550-RTK-Flash-v1',
+            description: 'RTK follow-me lighting drone based on DJI F550 frame',
+            rotorCount: 6,
+            targetAUW: null,
+            targetTW: 3.0,
+            motorThrust: 1400
+        };
+
+        let items = [];
+        let scenarios = {};
+        let editingItemIndex = null;
+        let currentScenarioName = null;  // 当前正在编辑的场景名称
+        let hasUnsavedChanges = false;  // 是否有未保存的更改
+        let autosaveInterval = null;  // 自动保存定时器
+        let isSaving = false;  // 是否正在保存
+        let groups = [];  // 组列表
+        let groupDisplayMode = false;  // 是否启用分组显示模式
+        let currentViewingImageIndex = null;  // 当前正在查看图片的项目索引
+        let currentEditingImage = null;  // 当前正在编辑的图片（base64）
+        let selectedItemIndices = new Set();  // 选中的项目索引集合
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromStorage();
+            // Sync rotorCount UI with project.rotorCount
+            const rotorSelect = document.getElementById('rotorCount');
+            if ([3, 4, 6, 8].includes(project.rotorCount)) {
+                rotorSelect.value = String(project.rotorCount);
+            } else {
+                rotorSelect.value = 'custom';
+                document.getElementById('customRotorCount').style.display = 'block';
+                document.getElementById('customRotorCount').value = project.rotorCount;
+            }
+            setupEventListeners();
+            updateSummary();
+            loadSampleData();
+            updateCategorySelect();  // 确保旧分类可用
+            updateGroupSelects();  // 更新组选择器
+            updateScenarioSelect();
+            // 如果保存了当前场景，自动加载它
+            if (currentScenarioName && scenarios[currentScenarioName]) {
+                // 延迟一点确保 UI 已准备好
+                setTimeout(() => {
+                    const select = document.getElementById('scenarioSelect');
+                    if (select) {
+                        select.value = currentScenarioName;
+                        loadScenario();
+                    }
+                }, 100);
+            } else {
+                updateCurrentScenarioInfo();
+            }
+            // 启动自动保存（每3秒）
+            startAutosave();
+            updateSaveStatus();
+            updateDebugInfo();  // Initialize debug info
+            updatePasteItemButtonState();  // Check if there's a copied item to paste
+        });
+
+        function setupEventListeners() {
+            document.getElementById('rotorCount').addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    document.getElementById('customRotorCount').style.display = 'block';
+                } else {
+                    document.getElementById('customRotorCount').style.display = 'none';
+                    project.rotorCount = parseInt(this.value);
+                    updateSummary();
+                    markAsUnsaved();
+                }
+            });
+
+            document.getElementById('customRotorCount').addEventListener('input', function() {
+                project.rotorCount = parseInt(this.value) || 4;
+                updateSummary();
+                markAsUnsaved();
+            });
+
+            ['projectName', 'projectDescription', 'targetAUW', 'targetTW', 'motorThrust'].forEach(id => {
+                document.getElementById(id).addEventListener('input', function() {
+                    if (id === 'projectName') {
+                        const oldName = project.name;
+                        project.name = this.value;
+                        // 如果当前有场景，且项目名称改变了，重命名场景
+                        if (currentScenarioName && oldName !== project.name && project.name.trim()) {
+                            renameScenario(currentScenarioName, project.name.trim());
+                        }
+                    } else if (id === 'projectDescription') project.description = this.value;
+                    else if (id === 'targetAUW') project.targetAUW = this.value ? parseFloat(this.value) : null;
+                    else if (id === 'targetTW') project.targetTW = this.value ? parseFloat(this.value) : null;
+                    else if (id === 'motorThrust') project.motorThrust = this.value ? parseFloat(this.value) : null;
+                    updateSummary();
+                    markAsUnsaved();
+                });
+            });
+        }
+
+        function loadSampleData() {
+            if (items.length === 0) {
+                // Add sample items
+                addItem('F550 frame + landing gear', 'Frame', 1, 581, 'Measured, incl. screws');
+                addItem('2806.5 motors', 'Motor', 6, 60, '');
+                addItem('30A ESC', 'ESC', 6, 20, '');
+                addItem('6S 6000mAh LiPo', 'Battery', 1, 600, '');
+                addItem('Pixhawk + RTK + LoRa + wiring', 'Electronics', 1, 280, 'Estimation, includes cables');
+                addItem('Flash (photo lighting)', 'Payload', 1, 300, '');
+                updateSummary();
+            }
+        }
+
+        function openAddItemModal() {
+            editingItemIndex = null;
+            document.getElementById('modalTitle').textContent = 'Add Item | 添加物品';
+            document.getElementById('itemForm').reset();
+            document.getElementById('itemCategoryCustom').style.display = 'none';
+            document.getElementById('itemCategoryCustom').value = '';
+            document.getElementById('itemIsEstimation').checked = false;
+            updateCategorySelect();
+            updateGroupSelects();
+            document.getElementById('itemGroup').value = '';
+            currentEditingImage = null;
+            document.getElementById('itemImageInput').value = '';
+            document.getElementById('itemImagePreview').style.display = 'none';
+            document.getElementById('itemModal').classList.add('active');
+            // 添加粘贴事件监听器
+            document.addEventListener('paste', handlePasteImage);
+        }
+
+        function openEditItemModal(index) {
+            editingItemIndex = index;
+            const item = items[index];
+            document.getElementById('modalTitle').textContent = 'Edit Item | 编辑物品';
+            document.getElementById('itemName').value = item.name;
+            
+            // 更新分类下拉菜单，确保旧分类可用
+            updateCategorySelect();
+            
+            // 检查分类是否在下拉菜单中
+            const categorySelect = document.getElementById('itemCategory');
+            const categoryCustom = document.getElementById('itemCategoryCustom');
+            if (categorySelect.querySelector(`option[value="${item.category}"]`)) {
+                categorySelect.value = item.category;
+                categoryCustom.style.display = 'none';
+                categoryCustom.value = '';
+            } else {
+                // 旧分类不在下拉菜单中，使用自定义输入
+                categorySelect.value = '';
+                categoryCustom.style.display = 'block';
+                categoryCustom.value = item.category;
+            }
+            
+            document.getElementById('itemQty').value = item.qty;
+            document.getElementById('itemWeight').value = item.weightPerUnit;
+            document.getElementById('itemNotes').value = item.notes || '';
+            document.getElementById('itemIsEstimation').checked = item.isEstimation || false;
+            updateGroupSelects();
+            document.getElementById('itemGroup').value = item.group || '';
+            
+            // 处理图片
+            currentEditingImage = item.image || null;
+            document.getElementById('itemImageInput').value = '';
+            if (item.image) {
+                document.getElementById('itemImagePreviewImg').src = item.image;
+                document.getElementById('itemImagePreview').style.display = 'block';
+            } else {
+                document.getElementById('itemImagePreview').style.display = 'none';
+            }
+            
+            document.getElementById('itemModal').classList.add('active');
+            // 添加粘贴事件监听器
+            document.addEventListener('paste', handlePasteImage);
+        }
+
+        function closeItemModal() {
+            document.getElementById('itemModal').classList.remove('active');
+            editingItemIndex = null;
+            currentEditingImage = null;
+            // 移除粘贴事件监听器
+            document.removeEventListener('paste', handlePasteImage);
+        }
+
+        function handlePasteImage(event) {
+            // 检查模态框是否打开
+            const modal = document.getElementById('itemModal');
+            if (!modal || !modal.classList.contains('active')) {
+                return;
+            }
+            
+            // 检查剪贴板数据
+            const items = event.clipboardData?.items;
+            if (!items) return;
+            
+            // 查找图片数据
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                if (item.type.indexOf('image') !== -1) {
+                    event.preventDefault();
+                    const blob = item.getAsFile();
+                    if (blob) {
+                        // 检查文件大小（限制为 2MB）
+                        if (blob.size > 2 * 1024 * 1024) {
+                            alert('Image file size must be less than 2MB.');
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            currentEditingImage = e.target.result;
+                            document.getElementById('itemImagePreviewImg').src = e.target.result;
+                            document.getElementById('itemImagePreview').style.display = 'block';
+                        };
+                        reader.onerror = function() {
+                            alert('Error reading image from clipboard.');
+                        };
+                        reader.readAsDataURL(blob);
+                    }
+                    return;
+                }
+            }
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // 检查文件类型
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file.');
+                event.target.value = '';
+                return;
+            }
+            
+            // 检查文件大小（限制为 2MB）
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Image file size must be less than 2MB.');
+                event.target.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentEditingImage = e.target.result;  // 保存为 base64
+                document.getElementById('itemImagePreviewImg').src = e.target.result;
+                document.getElementById('itemImagePreview').style.display = 'block';
+            };
+            reader.onerror = function() {
+                alert('Error reading image file.');
+                event.target.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeItemImage() {
+            currentEditingImage = null;
+            document.getElementById('itemImageInput').value = '';
+            document.getElementById('itemImagePreview').style.display = 'none';
+        }
+
+        function viewItemImage(index) {
+            const item = items[index];
+            if (!item.image) return;
+            
+            currentViewingImageIndex = index;
+            document.getElementById('imageViewImg').src = item.image;
+            document.getElementById('imageViewTitle').textContent = `View Image: ${item.name} | 查看图片: ${item.name}`;
+            document.getElementById('imageViewModal').classList.add('active');
+        }
+
+        function closeImageView() {
+            document.getElementById('imageViewModal').classList.remove('active');
+            currentViewingImageIndex = null;
+        }
+
+        function deleteItemImageFromView() {
+            if (currentViewingImageIndex === null) return;
+            
+            if (confirm('Delete this image?')) {
+                items[currentViewingImageIndex].image = null;
+                renderItems();
+                closeImageView();
+                markAsUnsaved();
+            }
+        }
+
+        function handleCategoryChange() {
+            const categorySelect = document.getElementById('itemCategory');
+            const categoryCustom = document.getElementById('itemCategoryCustom');
+            if (categorySelect.value === '__custom__') {
+                categoryCustom.style.display = 'block';
+                categoryCustom.focus();
+            } else {
+                categoryCustom.style.display = 'none';
+                categoryCustom.value = '';
+            }
+        }
+
+        function updateCategorySelect() {
+            // 获取所有已使用的分类（包括旧数据中的分类）
+            const usedCategories = new Set();
+            items.forEach(item => {
+                if (item.category) {
+                    usedCategories.add(item.category);
+                }
+            });
+            
+            const categorySelect = document.getElementById('itemCategory');
+            const existingOptions = Array.from(categorySelect.options).map(opt => opt.value);
+            
+            // 添加缺失的旧分类到下拉菜单（在 Custom 选项之前）
+            const customOption = categorySelect.querySelector('option[value="__custom__"]');
+            usedCategories.forEach(cat => {
+                if (!existingOptions.includes(cat) && cat !== '__custom__') {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat + ' (legacy)';
+                    if (customOption) {
+                        categorySelect.insertBefore(option, customOption);
+                    } else {
+                        categorySelect.appendChild(option);
+                    }
+                }
+            });
+        }
+
+        function saveItem(event) {
+            event.preventDefault();
+            const name = document.getElementById('itemName').value;
+            const categorySelect = document.getElementById('itemCategory');
+            const categoryCustom = document.getElementById('itemCategoryCustom');
+            // 如果选择了 Custom，使用自定义输入；否则使用下拉菜单的选择
+            let category;
+            if (categorySelect.value === '__custom__') {
+                category = categoryCustom.value.trim();
+                if (!category) {
+                    alert('Please enter a custom category.');
+                    categoryCustom.focus();
+                    return;
+                }
+            } else {
+                category = categorySelect.value;
+            }
+            if (!category) {
+                alert('Please select or enter a category.');
+                return;
+            }
+            const qty = parseInt(document.getElementById('itemQty').value);
+            const weightPerUnit = parseFloat(document.getElementById('itemWeight').value);
+            const notes = document.getElementById('itemNotes').value;
+            const isEstimation = document.getElementById('itemIsEstimation').checked;
+            const group = document.getElementById('itemGroup').value || '';
+            const image = currentEditingImage;  // 使用当前编辑的图片
+
+            if (editingItemIndex !== null) {
+                items[editingItemIndex] = { name, category, qty, weightPerUnit, notes, enabled: items[editingItemIndex].enabled, isEstimation, group, image };
+            } else {
+                items.push({ name, category, qty, weightPerUnit, notes, enabled: true, isEstimation, group, image });
+            }
+            
+            // 清除编辑中的图片
+            currentEditingImage = null;
+
+            closeItemModal();
+            renderItems();
+            updateSummary();
+            markAsUnsaved();
+        }
+
+        function deleteItem(index) {
+            if (confirm('Are you sure you want to delete this item?')) {
+                items.splice(index, 1);
+                renderItems();
+                updateSummary();
+                markAsUnsaved();
+            }
+        }
+
+        function toggleItemEnabled(index) {
+            items[index].enabled = !items[index].enabled;
+            updateSummary();
+            markAsUnsaved();
+        }
+
+        function toggleGroupDisplay() {
+            groupDisplayMode = document.getElementById('groupDisplayToggle').checked;
+            document.getElementById('groupManagerBtn').style.display = groupDisplayMode ? 'inline-block' : 'none';
+            renderItems();
+        }
+
+        function openGroupManager() {
+            updateGroupsList();
+            document.getElementById('groupManagerModal').classList.add('active');
+        }
+
+        function closeGroupManager() {
+            document.getElementById('groupManagerModal').classList.remove('active');
+            document.getElementById('newGroupName').value = '';
+        }
+
+        function createGroup() {
+            const groupName = document.getElementById('newGroupName').value.trim();
+            if (!groupName) {
+                alert('Please enter a group name.');
+                return;
+            }
+            if (groups.includes(groupName)) {
+                alert('Group already exists.');
+                return;
+            }
+            groups.push(groupName);
+            groups.sort();
+            updateGroupsList();
+            updateGroupSelects();
+            document.getElementById('newGroupName').value = '';
+            markAsUnsaved();
+        }
+
+        function deleteGroup(groupName) {
+            const itemCount = items.filter(item => item.group === groupName).length;
+            if (confirm(`Delete group "${groupName}"? ${itemCount} item${itemCount !== 1 ? 's' : ''} in this group will be moved to "No Group".`)) {
+                // 移除组（如果存在于 groups 数组中）
+                groups = groups.filter(g => g !== groupName);
+                // 将使用该组的项目移到无组
+                items.forEach(item => {
+                    if (item.group === groupName) {
+                        item.group = '';
+                    }
+                });
+                updateGroupsList();
+                updateGroupSelects();
+                renderItems();
+                markAsUnsaved();
+            }
+        }
+
+        function updateGroupsList() {
+            const groupsListDiv = document.getElementById('groupsList');
+            
+            // 获取所有使用的组（包括不在 groups 数组中的）
+            const allUsedGroups = new Set();
+            items.forEach(item => {
+                if (item.group && item.group.trim()) {
+                    allUsedGroups.add(item.group);
+                }
+            });
+            
+            // 合并 groups 数组和实际使用的组
+            const allGroups = Array.from(new Set([...groups, ...allUsedGroups])).sort();
+            
+            if (allGroups.length === 0) {
+                groupsListDiv.innerHTML = '<div style="color: #666; font-style: italic; padding: 5px;">No groups created yet.</div>';
+                return;
+            }
+            
+            groupsListDiv.innerHTML = allGroups.map(groupName => {
+                const itemCount = items.filter(item => item.group === groupName).length;
+                const isInGroupsArray = groups.includes(groupName);
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px; border-bottom: 1px solid #E0E0E0;">
+                        <div style="flex: 1; display: flex; align-items: center; gap: 5px;">
+                            <span id="groupName_${groupName.replace(/[^a-zA-Z0-9]/g, '_')}" style="flex: 1;"><strong>${groupName}</strong></span>
+                            <button class="btn btn-secondary btn-small" onclick="editGroupName('${groupName}')" style="font-size: 10px; padding: 2px 6px;">Edit</button>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span style="font-size: 11px; color: #666;">(${itemCount} item${itemCount !== 1 ? 's' : ''})</span>
+                            <button class="btn btn-danger btn-small" onclick="deleteGroup('${groupName}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function editGroupName(oldName) {
+            const newName = prompt(`Edit group name:`, oldName);
+            if (newName && newName.trim() && newName.trim() !== oldName) {
+                const trimmedNewName = newName.trim();
+                
+                // 检查新名称是否已存在
+                if (items.some(item => item.group === trimmedNewName)) {
+                    alert(`Group "${trimmedNewName}" already exists.`);
+                    return;
+                }
+                
+                // 更新所有使用该组的项目
+                items.forEach(item => {
+                    if (item.group === oldName) {
+                        item.group = trimmedNewName;
+                    }
+                });
+                
+                // 更新 groups 数组
+                if (groups.includes(oldName)) {
+                    groups = groups.filter(g => g !== oldName);
+                    groups.push(trimmedNewName);
+                    groups.sort();
+                } else {
+                    // 如果旧名称不在 groups 数组中，但新名称需要添加
+                    if (items.some(item => item.group === trimmedNewName)) {
+                        if (!groups.includes(trimmedNewName)) {
+                            groups.push(trimmedNewName);
+                            groups.sort();
+                        }
+                    }
+                }
+                
+                updateGroupsList();
+                updateGroupSelects();
+                renderItems();
+                markAsUnsaved();
+            }
+        }
+
+        function updateGroupSelects() {
+            const groupSelect = document.getElementById('itemGroup');
+            if (groupSelect) {
+                // 获取所有使用的组（包括不在 groups 数组中的）
+                const allUsedGroups = new Set();
+                items.forEach(item => {
+                    if (item.group && item.group.trim()) {
+                        allUsedGroups.add(item.group);
+                    }
+                });
+                
+                // 合并 groups 数组和实际使用的组
+                const allGroups = Array.from(new Set([...groups, ...allUsedGroups])).sort();
+                
+                groupSelect.innerHTML = '<option value="">No Group | 无组</option>' + 
+                    allGroups.map(g => `<option value="${g}">${g}</option>`).join('');
+            }
+        }
+
+        function moveItemUp(index) {
+            if (index === 0) return; // 已经在最上面
+            
+            const currentItem = items[index];
+            const currentGroup = currentItem.group || '';
+            
+            if (groupDisplayMode && currentGroup) {
+                // 分组模式下，只在同组内移动
+                // 找到同组的上一个项目
+                let targetIndex = -1;
+                for (let i = index - 1; i >= 0; i--) {
+                    const itemGroup = items[i].group || '';
+                    if (itemGroup === currentGroup) {
+                        targetIndex = i;
+                        break;
+                    }
+                }
+                if (targetIndex === -1) return; // 同组内没有上一个项目
+                
+                // 交换位置
+                const temp = items[index];
+                items[index] = items[targetIndex];
+                items[targetIndex] = temp;
+            } else {
+                // 普通模式，直接向上移动
+                const temp = items[index];
+                items[index] = items[index - 1];
+                items[index - 1] = temp;
+            }
+            
+            renderItems();
+            markAsUnsaved();
+        }
+
+        function moveItemDown(index) {
+            if (index === items.length - 1) return; // 已经在最下面
+            
+            const currentItem = items[index];
+            const currentGroup = currentItem.group || '';
+            
+            if (groupDisplayMode && currentGroup) {
+                // 分组模式下，只在同组内移动
+                // 找到同组的下一个项目
+                let targetIndex = -1;
+                for (let i = index + 1; i < items.length; i++) {
+                    const itemGroup = items[i].group || '';
+                    if (itemGroup === currentGroup) {
+                        targetIndex = i;
+                        break;
+                    }
+                }
+                if (targetIndex === -1) return; // 同组内没有下一个项目
+                
+                // 交换位置
+                const temp = items[index];
+                items[index] = items[targetIndex];
+                items[targetIndex] = temp;
+            } else {
+                // 普通模式，直接向下移动
+                const temp = items[index];
+                items[index] = items[index + 1];
+                items[index + 1] = temp;
+            }
+            
+            renderItems();
+            markAsUnsaved();
+        }
+
+        function getGroupOptionsForTable(currentGroup) {
+            // 获取所有使用的组（包括不在 groups 数组中的）
+            const allUsedGroups = new Set();
+            items.forEach(item => {
+                if (item.group && item.group.trim()) {
+                    allUsedGroups.add(item.group);
+                }
+            });
+            
+            // 合并 groups 数组和实际使用的组
+            const allGroups = Array.from(new Set([...groups, ...allUsedGroups])).sort();
+            
+            let options = '<option value="">No Group | 无组</option>';
+            options += allGroups.map(g => 
+                `<option value="${g}" ${currentGroup === g ? 'selected' : ''}>${g}</option>`
+            ).join('');
+            options += '<option value="__custom__">Custom | 自定义</option>';
+            
+            return options;
+        }
+
+        function changeItemGroupFromTable(index, newGroup) {
+            const item = items[index];
+            const oldGroup = item.group || '';
+            
+            if (newGroup === '__custom__') {
+                // 如果选择自定义，弹出输入框
+                const customGroup = prompt('Enter custom group name:', oldGroup);
+                if (customGroup && customGroup.trim()) {
+                    const trimmedGroup = customGroup.trim();
+                    // 检查是否已存在
+                    if (items.some(i => i.group === trimmedGroup && items.indexOf(i) !== index)) {
+                        alert(`Group "${trimmedGroup}" already exists.`);
+                        renderItems();
+                        return;
+                    }
+                    item.group = trimmedGroup;
+                    // 如果不在 groups 数组中，添加它
+                    if (!groups.includes(trimmedGroup)) {
+                        groups.push(trimmedGroup);
+                        groups.sort();
+                    }
+                    renderItems();
+                    updateSummary();
+                    markAsUnsaved();
+                } else {
+                    // 取消，恢复原值
+                    renderItems();
+                }
+            } else if (newGroup !== oldGroup) {
+                item.group = newGroup || '';
+                renderItems();
+                updateSummary();
+                markAsUnsaved();
+            }
+        }
+
+        function changeItemCategory(index, newCategory) {
+            const item = items[index];
+            const oldCategory = item.category;
+            
+            if (newCategory === '__custom__') {
+                // 如果选择自定义，弹出输入框
+                const customCategory = prompt('Enter custom category name:', oldCategory);
+                if (customCategory && customCategory.trim()) {
+                    item.category = customCategory.trim();
+                    renderItems();
+                    updateSummary();
+                    markAsUnsaved();
+                } else {
+                    // 取消，恢复原值
+                    renderItems();
+                }
+            } else if (newCategory !== oldCategory) {
+                item.category = newCategory;
+                renderItems();
+                updateSummary();
+                markAsUnsaved();
+            }
+        }
+
+        function updateItemQty(index, newValue, inputElement) {
+            const item = items[index];
+            const oldValue = item.qty;
+            const newQty = parseInt(newValue);
+            
+            if (isNaN(newQty) || newQty < 1) {
+                alert('Quantity must be a number greater than 0.');
+                inputElement.value = oldValue;
+                return;
+            }
+            
+            if (newQty === oldValue) {
+                inputElement.dataset.confirmed = 'true';
+                return; // 没有变化，不需要确认
+            }
+            
+            const oldTotal = oldValue * item.weightPerUnit;
+            const newTotal = newQty * item.weightPerUnit;
+            const diff = newTotal - oldTotal;
+            
+            const confirmMsg = `Change quantity for "${item.name}"?\n\n` +
+                             `Old: ${oldValue} × ${item.weightPerUnit.toFixed(2)} g = ${oldTotal.toFixed(2)} g\n` +
+                             `New: ${newQty} × ${item.weightPerUnit.toFixed(2)} g = ${newTotal.toFixed(2)} g\n` +
+                             `Difference: ${diff > 0 ? '+' : ''}${diff.toFixed(2)} g`;
+            
+            if (confirm(confirmMsg)) {
+                item.qty = newQty;
+                inputElement.dataset.confirmed = 'true';
+                renderItems();
+                updateSummary();
+                markAsUnsaved();
+            } else {
+                // 取消，恢复原值
+                inputElement.value = oldValue;
+                inputElement.dataset.confirmed = '';
+            }
+        }
+
+        function updateItemWeight(index, newValue, inputElement) {
+            const item = items[index];
+            const oldValue = item.weightPerUnit;
+            const newWeight = parseFloat(newValue);
+            
+            if (isNaN(newWeight) || newWeight < 0) {
+                alert('Weight must be a number greater than or equal to 0.');
+                inputElement.value = oldValue.toFixed(2);
+                return;
+            }
+            
+            if (Math.abs(newWeight - oldValue) < 0.01) {
+                inputElement.dataset.confirmed = 'true';
+                return; // 没有明显变化，不需要确认
+            }
+            
+            const oldTotal = item.qty * oldValue;
+            const newTotal = item.qty * newWeight;
+            const diff = newTotal - oldTotal;
+            
+            const confirmMsg = `Change unit weight for "${item.name}"?\n\n` +
+                             `Old: ${item.qty} × ${oldValue.toFixed(2)} g = ${oldTotal.toFixed(2)} g\n` +
+                             `New: ${item.qty} × ${newWeight.toFixed(2)} g = ${newTotal.toFixed(2)} g\n` +
+                             `Difference: ${diff > 0 ? '+' : ''}${diff.toFixed(2)} g`;
+            
+            if (confirm(confirmMsg)) {
+                item.weightPerUnit = newWeight;
+                inputElement.dataset.confirmed = 'true';
+                renderItems();
+                updateSummary();
+                markAsUnsaved();
+            } else {
+                // 取消，恢复原值
+                inputElement.value = oldValue.toFixed(2);
+                inputElement.dataset.confirmed = '';
+            }
+        }
+
+        function getCategoryOptions(currentCategory) {
+            const standardCategories = [
+                { value: 'Frame', label: 'Frame | 机架' },
+                { value: 'Motor', label: 'Motor | 电机' },
+                { value: 'ESC', label: 'ESC | 电调' },
+                { value: 'Battery', label: 'Battery | 电池' },
+                { value: 'Electronics', label: 'Electronics | 电子设备' },
+                { value: 'Payload', label: 'Payload | 载荷' },
+                { value: 'Misc', label: 'Misc | 其他' }
+            ];
+            
+            // 获取所有已使用的分类
+            const usedCategories = new Set();
+            items.forEach(item => {
+                if (item.category) {
+                    usedCategories.add(item.category);
+                }
+            });
+            
+            let options = standardCategories.map(cat => 
+                `<option value="${cat.value}" ${currentCategory === cat.value ? 'selected' : ''}>${cat.label}</option>`
+            ).join('');
+            
+            // 添加旧分类（如果不在标准分类中）
+            usedCategories.forEach(cat => {
+                if (!standardCategories.find(sc => sc.value === cat) && cat !== '__custom__') {
+                    options += `<option value="${cat}" ${currentCategory === cat ? 'selected' : ''}>${cat} (legacy)</option>`;
+                }
+            });
+            
+            options += `<option value="__custom__">Custom | 自定义</option>`;
+            
+            return options;
+        }
+
+        function renderItems() {
+            const tbody = document.getElementById('itemsTableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            if (items.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            
+            if (groupDisplayMode) {
+                // 分组显示模式
+                const groupedItems = {};
+                const noGroupItems = [];
+                
+                items.forEach((item, index) => {
+                    const group = item.group || '';
+                    if (group) {
+                        if (!groupedItems[group]) {
+                            groupedItems[group] = [];
+                        }
+                        groupedItems[group].push({ item, index });
+                    } else {
+                        noGroupItems.push({ item, index });
+                    }
+                });
+                
+                let html = '';
+                const sortedGroups = groups.filter(g => groupedItems[g]).concat(Object.keys(groupedItems).filter(g => !groups.includes(g)).sort());
+                
+                // 渲染有组的项目
+                sortedGroups.forEach(groupName => {
+                    const groupItems = groupedItems[groupName];
+                    // 组标题行
+                    html += `<tr style="background: #E0E0E0; font-weight: bold;">
+                        <td colspan="9" style="padding: 5px;">
+                            <strong>${groupName}</strong> (${groupItems.length} item${groupItems.length !== 1 ? 's' : ''})
+                        </td>
+                        <td style="padding: 5px; text-align: right;">
+                            <button class="btn btn-secondary btn-small" onclick="copyGroup('${groupName.replace(/'/g, "\\'")}')" title="Copy all items in this group | 复制此组中的所有物品">
+                                Copy Group
+                            </button>
+                        </td>
+                    </tr>`;
+                    
+                    // 组内项目
+                    groupItems.forEach(({ item, index }, groupIndex) => {
+                        const total = item.qty * item.weightPerUnit;
+                        const estimationStar = item.isEstimation ? '<span style="color: #C00000; font-weight: bold; margin-left: 3px;">*</span>' : '';
+                        const rowStyle = item.isEstimation ? 'style="background: #FFE0E0;"' : '';
+                        
+                        // 检查是否可以在组内移动
+                        const canMoveUp = groupIndex > 0;
+                        const canMoveDown = groupIndex < groupItems.length - 1;
+                        
+                        html += renderItemRow(item, index, total, estimationStar, rowStyle, canMoveUp, canMoveDown);
+                    });
+                });
+                
+                // 渲染无组的项目
+                if (noGroupItems.length > 0) {
+                    html += `<tr style="background: #E0E0E0; font-weight: bold;">
+                        <td colspan="10" style="padding: 5px;">
+                            <strong>No Group | 无组</strong> (${noGroupItems.length} item${noGroupItems.length !== 1 ? 's' : ''})
+                        </td>
+                    </tr>`;
+                    
+                    noGroupItems.forEach(({ item, index }, noGroupIndex) => {
+                        const total = item.qty * item.weightPerUnit;
+                        const estimationStar = item.isEstimation ? '<span style="color: #C00000; font-weight: bold; margin-left: 3px;">*</span>' : '';
+                        const rowStyle = item.isEstimation ? 'style="background: #FFE0E0;"' : '';
+                        
+                        const canMoveUp = noGroupIndex > 0;
+                        const canMoveDown = noGroupIndex < noGroupItems.length - 1;
+                        
+                        html += renderItemRow(item, index, total, estimationStar, rowStyle, canMoveUp, canMoveDown);
+                    });
+                }
+                
+                tbody.innerHTML = html;
+            } else {
+                // 普通显示模式
+                tbody.innerHTML = items.map((item, index) => {
+                    const total = item.qty * item.weightPerUnit;
+                    const estimationStar = item.isEstimation ? '<span style="color: #C00000; font-weight: bold; margin-left: 3px;">*</span>' : '';
+                    const rowStyle = item.isEstimation ? 'style="background: #FFE0E0;"' : '';
+                    const canMoveUp = index > 0;
+                    const canMoveDown = index < items.length - 1;
+                    return renderItemRow(item, index, total, estimationStar, rowStyle, canMoveUp, canMoveDown);
+                }).join('');
+            }
+        }
+
+        function renderItemRow(item, index, total, estimationStar, rowStyle, canMoveUp, canMoveDown) {
+            return `
+                    <tr ${rowStyle}>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <div style="display: flex; flex-direction: column; gap: 2px; align-items: center;">
+                                <button class="btn btn-small" 
+                                        onclick="moveItemUp(${index})" 
+                                        ${!canMoveUp ? 'disabled' : ''}
+                                        style="padding: 1px 4px; font-size: 10px; min-height: 16px; width: 20px; ${!canMoveUp ? 'opacity: 0.5; cursor: not-allowed;' : ''}"
+                                        title="Move up">
+                                    ▲
+                                </button>
+                                <button class="btn btn-small" 
+                                        onclick="moveItemDown(${index})" 
+                                        ${!canMoveDown ? 'disabled' : ''}
+                                        style="padding: 1px 4px; font-size: 10px; min-height: 16px; width: 20px; ${!canMoveDown ? 'opacity: 0.5; cursor: not-allowed;' : ''}"
+                                        title="Move down">
+                                    ▼
+                                </button>
+                            </div>
+                        </td>
+                        <td class="checkbox-cell">
+                            <input type="checkbox" ${item.enabled ? 'checked' : ''} 
+                                   onchange="toggleItemEnabled(${index})">
+                        </td>
+                        <td>
+                            <select onchange="changeItemGroupFromTable(${index}, this.value)" 
+                                    style="padding: 2px; border: 2px inset #C0C0C0; font-size: 11px; width: 100%;">
+                                ${getGroupOptionsForTable(item.group || '')}
+                            </select>
+                        </td>
+                        <td>${item.name}</td>
+                        <td>
+                            <input type="number" 
+                                   value="${item.qty}" 
+                                   min="1" 
+                                   step="1"
+                                   data-original-qty="${item.qty}"
+                                   style="width: 60px; padding: 2px; border: 2px inset #C0C0C0; text-align: center; font-size: 11px;"
+                                   onchange="updateItemQty(${index}, this.value, this)"
+                                   onblur="if (!this.dataset.confirmed) { this.value = items[${index}].qty; this.dataset.confirmed = ''; }">
+                        </td>
+                        <td>
+                            <input type="number" 
+                                   value="${item.weightPerUnit.toFixed(2)}" 
+                                   min="0" 
+                                   step="0.01"
+                                   data-original-weight="${item.weightPerUnit}"
+                                   style="width: 80px; padding: 2px; border: 2px inset #C0C0C0; text-align: center; font-size: 11px;"
+                                   onchange="updateItemWeight(${index}, this.value, this)"
+                                   onblur="if (!this.dataset.confirmed) { this.value = items[${index}].weightPerUnit.toFixed(2); this.dataset.confirmed = ''; }">
+                        </td>
+                        <td><strong>${total.toFixed(2)}${estimationStar}</strong></td>
+                        <td>${item.notes || '-'}</td>
+                        <td style="text-align: center; vertical-align: middle; padding: 2px;">
+                            ${item.image ? `
+                                <img src="${item.image}" 
+                                     onclick="viewItemImage(${index})" 
+                                     style="max-width: 60px; max-height: 60px; cursor: pointer; border: 1px solid #C0C0C0; object-fit: contain;"
+                                     title="Click to view full image">
+                            ` : `
+                                <span style="color: #999; font-size: 10px;">No image</span>
+                            `}
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary btn-small" onclick="openEditItemModal(${index})">Edit</button>
+                            <button class="btn btn-secondary btn-small" onclick="copySingleItem(${index})" title="Copy this item | 复制此物品">Copy</button>
+                            <button class="btn btn-danger btn-small" onclick="deleteItem(${index})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+        }
+
+        function updateSummary() {
+            const enabledItems = items.filter(item => item.enabled);
+            const totalWeightG = enabledItems.reduce((sum, item) => sum + (item.qty * item.weightPerUnit), 0);
+            const totalWeightKg = totalWeightG / 1000;
+
+            // 显示总重量公式
+            if (enabledItems.length > 0) {
+                // 显示前几个项目的详细计算
+                const showCount = Math.min(3, enabledItems.length);
+                const formulaParts = enabledItems.slice(0, showCount).map(item => {
+                    const itemTotal = item.qty * item.weightPerUnit;
+                    return `${item.qty} × ${item.weightPerUnit.toFixed(2)} = ${itemTotal.toFixed(2)}`;
+                });
+                let formulaText = `Σ(qty × weight) = ${formulaParts.join(' + ')}`;
+                if (enabledItems.length > showCount) {
+                    const remainingSum = enabledItems.slice(showCount).reduce((sum, item) => 
+                        sum + (item.qty * item.weightPerUnit), 0);
+                    formulaText += ` + ${remainingSum.toFixed(2)} (${enabledItems.length - showCount} more)`;
+                }
+                formulaText += ` = ${totalWeightG.toFixed(2)} g`;
+                document.getElementById('totalWeightFormula').textContent = formulaText;
+            } else {
+                document.getElementById('totalWeightFormula').textContent = 'Σ(qty × weight) = 0 g (no enabled items)';
+            }
+
+            document.getElementById('totalWeightG').textContent = `${totalWeightG.toFixed(2)} g`;
+            document.getElementById('totalWeightKg').textContent = `${totalWeightKg.toFixed(3)} kg`;
+
+            const weightPerMotor = project.rotorCount > 0 ? totalWeightKg / project.rotorCount : 0;
+            if (project.rotorCount > 0) {
+                document.getElementById('weightPerMotorFormula').textContent = 
+                    `Total(kg) / Rotors = ${totalWeightKg.toFixed(3)} / ${project.rotorCount} = ${weightPerMotor.toFixed(3)} kg`;
+            } else {
+                document.getElementById('weightPerMotorFormula').textContent = 
+                    'Total(kg) / Rotors = N/A (rotor count = 0)';
+            }
+            document.getElementById('weightPerMotor').textContent = `${weightPerMotor.toFixed(3)} kg`;
+
+            // Category breakdown
+            const categoryBreakdown = {};
+            const categoryItems = {};
+            enabledItems.forEach(item => {
+                const category = item.category;
+                if (!categoryBreakdown[category]) {
+                    categoryBreakdown[category] = 0;
+                    categoryItems[category] = [];
+                }
+                const itemTotal = item.qty * item.weightPerUnit;
+                categoryBreakdown[category] += itemTotal;
+                categoryItems[category].push(item);
+            });
+
+            const categoryList = document.getElementById('categoryBreakdown');
+            categoryList.innerHTML = Object.entries(categoryBreakdown)
+                .sort((a, b) => b[1] - a[1])
+                .map(([cat, weight]) => {
+                    const items = categoryItems[cat];
+                    let formulaText = '';
+                    if (items.length <= 2) {
+                        // 显示所有项目的计算
+                        formulaText = items.map(item => 
+                            `${item.qty} × ${item.weightPerUnit.toFixed(2)}`
+                        ).join(' + ');
+                    } else {
+                        // 只显示前两个
+                        formulaText = items.slice(0, 2).map(item => 
+                            `${item.qty} × ${item.weightPerUnit.toFixed(2)}`
+                        ).join(' + ') + ` + ... (${items.length - 2} more)`;
+                    }
+                    return `
+                        <li>
+                            <div>
+                                <span><strong>${cat}</strong></span>
+                                <div style="font-family: monospace; font-size: 9px; color: #666; margin-top: 2px;">
+                                    ${formulaText} = ${weight.toFixed(2)} g
+                                </div>
+                            </div>
+                            <strong>${weight.toFixed(2)} g</strong>
+                        </li>
+                    `;
+                }).join('');
+
+            // Thrust-to-weight ratio
+            if (project.motorThrust && project.rotorCount > 0) {
+                const totalThrust = project.motorThrust * project.rotorCount;
+                const twRatio = totalThrust / totalWeightG;
+                
+                document.getElementById('twCard').style.display = 'block';
+                document.getElementById('twFormula').textContent = 
+                    `(Motor Thrust × Rotors) / Total = (${project.motorThrust} × ${project.rotorCount}) / ${totalWeightG.toFixed(2)} = ${twRatio.toFixed(2)}`;
+                document.getElementById('twRatio').textContent = twRatio.toFixed(2);
+                
+                const indicator = document.getElementById('twIndicator');
+                indicator.textContent = twRatio >= 3 ? 'Safe' : (twRatio >= 2.5 ? 'Warning' : 'Low');
+                indicator.className = 'tw-indicator ' + (twRatio >= 3 ? 'tw-safe' : (twRatio >= 2.5 ? 'tw-warning' : 'tw-danger'));
+                
+                document.getElementById('twDetails').textContent = 
+                    `Total thrust: ${totalThrust.toFixed(0)} g (${project.motorThrust} g × ${project.rotorCount})`;
+            } else {
+                document.getElementById('twCard').style.display = 'none';
+            }
+
+            // Target comparison
+            if (project.targetAUW || project.targetTW) {
+                document.getElementById('targetCard').style.display = 'block';
+                let comparison = '';
+                if (project.targetAUW) {
+                    const diff = totalWeightG - project.targetAUW;
+                    comparison += `<div style="margin-bottom: 8px;">
+                        <strong>Target AUW:</strong> ${project.targetAUW} g<br>
+                        <div style="font-family: monospace; font-size: 10px; color: #666; margin: 3px 0;">
+                            Diff = Current - Target = ${totalWeightG.toFixed(2)} - ${project.targetAUW} = ${diff > 0 ? '+' : ''}${diff.toFixed(2)} g
+                        </div>
+                        <span style="color: ${diff > 0 ? '#ef4444' : '#10b981'}">
+                            ${diff > 0 ? '+' : ''}${diff.toFixed(2)} g ${diff > 0 ? 'over' : 'under'}
+                        </span>
+                    </div>`;
+                }
+                if (project.targetTW && project.motorThrust) {
+                    const totalThrust = project.motorThrust * project.rotorCount;
+                    const currentTW = totalThrust / totalWeightG;
+                    const diff = currentTW - project.targetTW;
+                    comparison += `<div>
+                        <strong>Target T/W:</strong> ${project.targetTW.toFixed(2)}<br>
+                        <div style="font-family: monospace; font-size: 10px; color: #666; margin: 3px 0;">
+                            Diff = Current - Target = ${currentTW.toFixed(2)} - ${project.targetTW.toFixed(2)} = ${diff > 0 ? '+' : ''}${diff.toFixed(2)}
+                        </div>
+                        <span style="color: ${diff < 0 ? '#ef4444' : '#10b981'}">
+                            Current: ${currentTW.toFixed(2)} (${diff > 0 ? '+' : ''}${diff.toFixed(2)})
+                        </span>
+                    </div>`;
+                }
+                document.getElementById('targetComparison').innerHTML = comparison;
+            } else {
+                document.getElementById('targetCard').style.display = 'none';
+            }
+            
+            // Update debug info
+            updateDebugInfo();
+        }
+
+        function toggleDebugInfo() {
+            const debugInfo = document.getElementById('debugInfo');
+            const debugToggle = document.getElementById('debugToggle');
+            if (debugInfo.style.display === 'none') {
+                debugInfo.style.display = 'block';
+                debugToggle.textContent = '▲';
+                updateDebugInfo();
+            } else {
+                debugInfo.style.display = 'none';
+                debugToggle.textContent = '▼';
+            }
+        }
+
+        function updateDebugInfo() {
+            const debugContent = document.getElementById('debugContent');
+            if (!debugContent) return;
+            
+            const enabledItems = items.filter(item => item.enabled);
+            const totalWeightG = enabledItems.reduce((sum, item) => sum + (item.qty * item.weightPerUnit), 0);
+            const totalWeightKg = totalWeightG / 1000;
+            
+            let debugHTML = '<div style="line-height: 1.4;">';
+            
+            // Project Info
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Project Info:</strong><br>';
+            debugHTML += `  Name: ${project.name || '(empty)'}<br>`;
+            debugHTML += `  Description: ${project.description || '(empty)'}<br>`;
+            debugHTML += `  Rotor Count: ${project.rotorCount}<br>`;
+            debugHTML += `  Target AUW: ${project.targetAUW || 'null'}<br>`;
+            debugHTML += `  Target T/W: ${project.targetTW || 'null'}<br>`;
+            debugHTML += `  Motor Thrust: ${project.motorThrust || 'null'}<br>`;
+            debugHTML += `  Current Scenario: ${currentScenarioName || 'null'}<br>`;
+            debugHTML += '</div>';
+            
+            // Weight Calculations
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Weight Calculations:</strong><br>';
+            debugHTML += `  Total Weight (g): ${totalWeightG.toFixed(2)}<br>`;
+            debugHTML += `  Total Weight (kg): ${totalWeightKg.toFixed(3)}<br>`;
+            if (project.rotorCount > 0) {
+                const weightPerMotor = totalWeightKg / project.rotorCount;
+                debugHTML += `  Weight per Motor (kg): ${weightPerMotor.toFixed(4)}<br>`;
+            }
+            if (project.motorThrust && project.rotorCount > 0) {
+                const totalThrust = project.motorThrust * project.rotorCount;
+                const currentTW = totalThrust / totalWeightG;
+                debugHTML += `  Total Thrust (g): ${totalThrust.toFixed(2)}<br>`;
+                debugHTML += `  Current T/W: ${currentTW.toFixed(2)}<br>`;
+                if (project.targetTW) {
+                    debugHTML += `  Target T/W: ${project.targetTW.toFixed(2)}<br>`;
+                    const diff = currentTW - project.targetTW;
+                    debugHTML += `  T/W Diff: ${diff > 0 ? '+' : ''}${diff.toFixed(2)}<br>`;
+                }
+            }
+            debugHTML += '</div>';
+            
+            // Items Summary
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Items Summary:</strong><br>';
+            debugHTML += `  Total Items: ${items.length}<br>`;
+            debugHTML += `  Enabled Items: ${enabledItems.length}<br>`;
+            debugHTML += `  Disabled Items: ${items.length - enabledItems.length}<br>`;
+            debugHTML += `  Selected Items: ${selectedItemIndices && selectedItemIndices.size ? selectedItemIndices.size : 0}<br>`;
+            debugHTML += `  Items with Images: ${items.filter(item => item.image).length}<br>`;
+            debugHTML += `  Estimation Items: ${items.filter(item => item.isEstimation).length}<br>`;
+            debugHTML += '</div>';
+            
+            // Groups Info
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Groups:</strong><br>';
+            debugHTML += `  Total Groups: ${groups.length}<br>`;
+            if (groups.length > 0) {
+                debugHTML += `  Groups: ${groups.join(', ')}<br>`;
+            }
+            const itemsByGroup = {};
+            items.forEach(item => {
+                const group = item.group || '(no group)';
+                itemsByGroup[group] = (itemsByGroup[group] || 0) + 1;
+            });
+            debugHTML += `  Items by Group:<br>`;
+            Object.entries(itemsByGroup).forEach(([group, count]) => {
+                debugHTML += `    ${group}: ${count}<br>`;
+            });
+            debugHTML += '</div>';
+            
+            // Scenarios Info
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Scenarios:</strong><br>';
+            debugHTML += `  Total Scenarios: ${Object.keys(scenarios).length}<br>`;
+            if (Object.keys(scenarios).length > 0) {
+                debugHTML += `  Scenario Names: ${Object.keys(scenarios).join(', ')}<br>`;
+            }
+            debugHTML += '</div>';
+            
+            // Category Breakdown
+            const categoryBreakdown = {};
+            enabledItems.forEach(item => {
+                const category = item.category;
+                if (!categoryBreakdown[category]) {
+                    categoryBreakdown[category] = { count: 0, weight: 0 };
+                }
+                categoryBreakdown[category].count += 1;
+                categoryBreakdown[category].weight += item.qty * item.weightPerUnit;
+            });
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Category Breakdown:</strong><br>';
+            Object.entries(categoryBreakdown).forEach(([cat, data]) => {
+                debugHTML += `  ${cat}: ${data.count} items, ${data.weight.toFixed(2)}g<br>`;
+            });
+            debugHTML += '</div>';
+            
+            // Storage Info
+            debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Storage:</strong><br>';
+            try {
+                const saved = localStorage.getItem('droneWeightCalculator');
+                const copied = localStorage.getItem('droneWeightCalculator_copiedItems');
+                const copiedSingle = localStorage.getItem('droneWeightCalculator_copiedSingleItem');
+                const copiedGroup = localStorage.getItem('droneWeightCalculator_copiedGroup');
+                debugHTML += `  Main Data: ${saved ? 'Present (' + (saved.length / 1024).toFixed(2) + ' KB)' : 'Not found'}<br>`;
+                debugHTML += `  Copied Items (multi): ${copied ? 'Present (' + (copied.length / 1024).toFixed(2) + ' KB)' : 'Not found'}<br>`;
+                debugHTML += `  Copied Single Item: ${copiedSingle ? 'Present (' + (copiedSingle.length / 1024).toFixed(2) + ' KB)' : 'Not found'}<br>`;
+                debugHTML += `  Copied Group: ${copiedGroup ? 'Present (' + (copiedGroup.length / 1024).toFixed(2) + ' KB)' : 'Not found'}<br>`;
+                debugHTML += `  Has Unsaved Changes: ${hasUnsavedChanges}<br>`;
+                debugHTML += `  Is Saving: ${isSaving}<br>`;
+            } catch (e) {
+                debugHTML += `  Error accessing storage: ${e.message}<br>`;
+            }
+            debugHTML += '</div>';
+            
+            // Copied Group Info
+            try {
+                const copiedGroupStr = localStorage.getItem('droneWeightCalculator_copiedGroup');
+                if (copiedGroupStr) {
+                    const copiedData = JSON.parse(copiedGroupStr);
+                    if (copiedData && copiedData.items && Array.isArray(copiedData.items)) {
+                        debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Copied Group:</strong><br>';
+                        debugHTML += `  Group Name: ${copiedData.groupName || '(unknown)'}<br>`;
+                        debugHTML += `  Item Count: ${copiedData.items.length}<br>`;
+                        debugHTML += `  Source Project: ${copiedData.sourceProject || 'Unknown'}<br>`;
+                        if (copiedData.copiedAt) {
+                            const copiedDate = new Date(copiedData.copiedAt);
+                            debugHTML += `  Copied At: ${copiedDate.toLocaleString()}<br>`;
+                        }
+                        debugHTML += '</div>';
+                    }
+                }
+            } catch (e) {
+                debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Copied Group:</strong><br>';
+                debugHTML += `  Error reading copied group: ${e.message}<br>`;
+                debugHTML += '</div>';
+            }
+            
+            // Copied Single Item Info
+            try {
+                const copiedSingleStr = localStorage.getItem('droneWeightCalculator_copiedSingleItem');
+                if (copiedSingleStr) {
+                    const copiedData = JSON.parse(copiedSingleStr);
+                    if (copiedData && copiedData.item) {
+                        const item = copiedData.item;
+                        debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Copied Single Item:</strong><br>';
+                        debugHTML += `  Name: ${item.name || '(empty)'}<br>`;
+                        debugHTML += `  Category: ${item.category || '(empty)'}<br>`;
+                        debugHTML += `  Quantity: ${item.qty || 0}<br>`;
+                        debugHTML += `  Weight per Unit: ${item.weightPerUnit ? item.weightPerUnit.toFixed(2) : '0.00'} g<br>`;
+                        debugHTML += `  Total Weight: ${(item.qty * item.weightPerUnit).toFixed(2)} g<br>`;
+                        debugHTML += `  Notes: ${item.notes || '(none)'}<br>`;
+                        debugHTML += `  Enabled: ${item.enabled !== undefined ? item.enabled : 'true'}<br>`;
+                        debugHTML += `  Is Estimation: ${item.isEstimation || false}<br>`;
+                        debugHTML += `  Group: ${item.group || '(no group)'}<br>`;
+                        debugHTML += `  Has Image: ${item.image ? 'Yes' : 'No'}<br>`;
+                        debugHTML += `  Source Project: ${copiedData.sourceProject || 'Unknown'}<br>`;
+                        if (copiedData.copiedAt) {
+                            const copiedDate = new Date(copiedData.copiedAt);
+                            debugHTML += `  Copied At: ${copiedDate.toLocaleString()}<br>`;
+                        }
+                        debugHTML += '</div>';
+                    }
+                }
+            } catch (e) {
+                debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Copied Single Item:</strong><br>';
+                debugHTML += `  Error reading copied item: ${e.message}<br>`;
+                debugHTML += '</div>';
+            }
+            
+            // Selection Details
+            if (selectedItemIndices && selectedItemIndices.size > 0) {
+                debugHTML += '<div style="margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #C0C0C0;"><strong>Selected Items:</strong><br>';
+                Array.from(selectedItemIndices).sort((a, b) => a - b).forEach(index => {
+                    const item = items[index];
+                    if (item) {
+                        debugHTML += `  [${index}] ${item.name} (${item.qty}x ${item.weightPerUnit}g)<br>`;
+                    }
+                });
+                debugHTML += '</div>';
+            }
+            
+            // Raw Items Data (first 5 items)
+            debugHTML += '<div style="margin-bottom: 8px;"><strong>Items Data (first 5):</strong><br>';
+            items.slice(0, 5).forEach((item, index) => {
+                debugHTML += `  [${index}] ${JSON.stringify(item).substring(0, 80)}...<br>`;
+            });
+            if (items.length > 5) {
+                debugHTML += `  ... and ${items.length - 5} more items<br>`;
+            }
+            debugHTML += '</div>';
+            
+            debugHTML += '</div>';
+            debugContent.innerHTML = debugHTML;
+        }
+
+        function addItem(name, category, qty, weightPerUnit, notes = '', isEstimation = false, group = '', image = null) {
+            items.push({ name, category, qty, weightPerUnit, notes, enabled: true, isEstimation, group, image });
+            renderItems();
+        }
+
+        // Single item copy/paste functionality
+        function copySingleItem(index) {
+            if (index < 0 || index >= items.length) {
+                alert('Invalid item index. | 无效的物品索引。');
+                return;
+            }
+
+            const item = items[index];
+            // Create a deep copy of the item
+            const itemCopy = {
+                name: item.name,
+                category: item.category,
+                qty: item.qty,
+                weightPerUnit: item.weightPerUnit,
+                notes: item.notes || '',
+                enabled: item.enabled !== undefined ? item.enabled : true,
+                isEstimation: item.isEstimation || false,
+                group: item.group || '',
+                image: item.image || null
+            };
+
+            // Store in localStorage with metadata
+            const copyData = {
+                item: itemCopy,
+                copiedAt: new Date().toISOString(),
+                sourceProject: currentScenarioName || project.name || 'Unknown',
+                version: '1.0'
+            };
+
+            try {
+                localStorage.setItem('droneWeightCalculator_copiedSingleItem', JSON.stringify(copyData));
+                updatePasteItemButtonState();
+            } catch (error) {
+                console.error('Error copying item:', error);
+                alert('Error copying item. | 复制物品时出错。');
+            }
+        }
+
+        function pasteSingleItem() {
+            try {
+                // Check for group copy first, then single item copy
+                let copyDataStr = localStorage.getItem('droneWeightCalculator_copiedGroup');
+                let isGroupCopy = false;
+                
+                if (!copyDataStr) {
+                    copyDataStr = localStorage.getItem('droneWeightCalculator_copiedSingleItem');
+                } else {
+                    isGroupCopy = true;
+                }
+                
+                if (!copyDataStr) {
+                    alert('No item or group in clipboard. Copy an item or group first. | 剪贴板中没有物品或组。请先复制一个物品或组。');
+                    return;
+                }
+
+                const copyData = JSON.parse(copyDataStr);
+                
+                // Handle group copy
+                if (isGroupCopy || copyData.isGroup) {
+                    if (!copyData.items || !Array.isArray(copyData.items) || copyData.items.length === 0) {
+                        alert('Clipboard data is invalid. | 剪贴板数据无效。');
+                        return;
+                    }
+
+                    const groupName = copyData.groupName || '';
+                    const itemsToPaste = copyData.items;
+                    
+                    // Validate all items
+                    const validItems = [];
+                    for (let i = 0; i < itemsToPaste.length; i++) {
+                        const item = itemsToPaste[i];
+                        if (!item.name || typeof item.name !== 'string' || item.name.trim() === '') continue;
+                        if (typeof item.qty !== 'number' || item.qty <= 0 || !Number.isInteger(item.qty)) continue;
+                        if (typeof item.weightPerUnit !== 'number' || item.weightPerUnit < 0 || isNaN(item.weightPerUnit)) continue;
+                        if (!item.category || typeof item.category !== 'string' || item.category.trim() === '') continue;
+
+                        validItems.push({
+                            name: item.name.trim(),
+                            category: item.category.trim(),
+                            qty: Math.max(1, Math.floor(item.qty)),
+                            weightPerUnit: Math.max(0, parseFloat(item.weightPerUnit)),
+                            notes: (item.notes || '').trim(),
+                            enabled: item.enabled !== undefined ? Boolean(item.enabled) : true,
+                            isEstimation: Boolean(item.isEstimation || false),
+                            group: groupName.trim(),  // Use the stored group name
+                            image: item.image || null
+                        });
+                    }
+
+                    if (validItems.length === 0) {
+                        alert('No valid items to paste. | 没有可粘贴的有效物品。');
+                        return;
+                    }
+
+                    // Add all items to current project
+                    validItems.forEach(item => {
+                        items.push(item);
+                    });
+
+                    // Update groups list if new group was added
+                    if (groupName && groupName.trim() && !groups.includes(groupName.trim())) {
+                        groups.push(groupName.trim());
+                        groups.sort();
+                    }
+
+                    // Refresh UI
+                    renderItems();
+                    updateSummary();
+                    updateGroupSelects();
+                    markAsUnsaved();
+
+                    // Show success message
+                    let message = `Pasted ${validItems.length} item${validItems.length !== 1 ? 's' : ''} from group "${groupName}"`;
+                    if (copyData.sourceProject) {
+                        message += ` from "${copyData.sourceProject}"`;
+                    }
+                    message += '. | 已粘贴组 "' + groupName + '" 中的 ' + validItems.length + ' 个物品';
+                    alert(message);
+                    return;
+                }
+
+                // Handle single item copy (original logic)
+                if (!copyData.item) {
+                    alert('Clipboard data is invalid. | 剪贴板数据无效。');
+                    return;
+                }
+
+                const item = copyData.item;
+
+                // Validate required fields
+                if (!item.name || typeof item.name !== 'string' || item.name.trim() === '') {
+                    alert('Invalid item data: missing or invalid name. | 无效的物品数据：缺少或无效的名称。');
+                    return;
+                }
+                if (typeof item.qty !== 'number' || item.qty <= 0 || !Number.isInteger(item.qty)) {
+                    alert('Invalid item data: invalid quantity. | 无效的物品数据：无效的数量。');
+                    return;
+                }
+                if (typeof item.weightPerUnit !== 'number' || item.weightPerUnit < 0 || isNaN(item.weightPerUnit)) {
+                    alert('Invalid item data: invalid weight. | 无效的物品数据：无效的重量。');
+                    return;
+                }
+                if (!item.category || typeof item.category !== 'string' || item.category.trim() === '') {
+                    alert('Invalid item data: missing or invalid category. | 无效的物品数据：缺少或无效的分类。');
+                    return;
+                }
+
+                // Create a clean item object
+                const newItem = {
+                    name: item.name.trim(),
+                    category: item.category.trim(),
+                    qty: Math.max(1, Math.floor(item.qty)),
+                    weightPerUnit: Math.max(0, parseFloat(item.weightPerUnit)),
+                    notes: (item.notes || '').trim(),
+                    enabled: item.enabled !== undefined ? Boolean(item.enabled) : true,
+                    isEstimation: Boolean(item.isEstimation || false),
+                    group: (item.group || '').trim(),
+                    image: item.image || null
+                };
+
+                // Add item to current project
+                items.push(newItem);
+
+                // Update groups list if new group was added
+                if (newItem.group && newItem.group.trim() && !groups.includes(newItem.group)) {
+                    groups.push(newItem.group);
+                    groups.sort();
+                }
+
+                // Refresh UI
+                renderItems();
+                updateSummary();
+                updateGroupSelects();
+                markAsUnsaved();
+
+                // Show success message
+                let message = `Pasted "${newItem.name}"`;
+                if (copyData.sourceProject) {
+                    message += ` from "${copyData.sourceProject}"`;
+                }
+                message += '. | 已粘贴 "' + newItem.name + '"';
+                alert(message);
+            } catch (error) {
+                console.error('Error pasting item:', error);
+                alert('Error pasting item. The clipboard data might be corrupted. | 粘贴物品时出错。剪贴板数据可能已损坏。');
+            }
+        }
+
+        function updatePasteItemButtonState() {
+            const pasteBtn = document.getElementById('pasteItemBtn');
+            if (pasteBtn) {
+                try {
+                    const singleItemStr = localStorage.getItem('droneWeightCalculator_copiedSingleItem');
+                    const groupStr = localStorage.getItem('droneWeightCalculator_copiedGroup');
+                    const hasItem = (singleItemStr && singleItemStr.trim() !== '') || (groupStr && groupStr.trim() !== '');
+                    pasteBtn.disabled = !hasItem;
+                    pasteBtn.style.opacity = hasItem ? '1' : '0.5';
+                    pasteBtn.style.cursor = hasItem ? 'pointer' : 'not-allowed';
+                } catch (error) {
+                    console.error('Error updating paste item button state:', error);
+                }
+            }
+        }
+
+        // Copy group functionality
+        function copyGroup(groupName) {
+            if (!groupName || groupName.trim() === '') {
+                alert('Invalid group name. | 无效的组名。');
+                return;
+            }
+
+            // Get all items in the group
+            const groupItems = items.filter(item => (item.group || '') === groupName);
+            
+            if (groupItems.length === 0) {
+                alert(`No items found in group "${groupName}". | 组 "${groupName}" 中没有找到物品。`);
+                return;
+            }
+
+            // Create deep copies of all items in the group
+            const itemsToCopy = groupItems.map(item => ({
+                name: item.name,
+                category: item.category,
+                qty: item.qty,
+                weightPerUnit: item.weightPerUnit,
+                notes: item.notes || '',
+                enabled: item.enabled !== undefined ? item.enabled : true,
+                isEstimation: item.isEstimation || false,
+                group: item.group || groupName,  // Ensure group name is preserved
+                image: item.image || null
+            }));
+
+            // Store in localStorage with metadata
+            const copyData = {
+                items: itemsToCopy,
+                groupName: groupName,  // Store the group name separately
+                copiedAt: new Date().toISOString(),
+                sourceProject: currentScenarioName || project.name || 'Unknown',
+                version: '1.0',
+                isGroup: true  // Flag to indicate this is a group copy
+            };
+
+            try {
+                localStorage.setItem('droneWeightCalculator_copiedGroup', JSON.stringify(copyData));
+                updatePasteItemButtonState();  // This will also check for group copies
+                alert(`Copied ${itemsToCopy.length} item${itemsToCopy.length !== 1 ? 's' : ''} from group "${groupName}" to clipboard. | 已复制组 "${groupName}" 中的 ${itemsToCopy.length} 个物品到剪贴板。`);
+            } catch (error) {
+                console.error('Error copying group:', error);
+                alert('Error copying group. The data might be too large. | 复制组时出错。数据可能太大。');
+            }
+        }
+
+        function exportTXT() {
+            const enabledItems = items.filter(item => item.enabled);
+            const totalWeightG = enabledItems.reduce((sum, item) => sum + (item.qty * item.weightPerUnit), 0);
+            const totalWeightKg = totalWeightG / 1000;
+            const weightPerMotor = project.rotorCount > 0 ? totalWeightKg / project.rotorCount : 0;
+
+            let txt = `=== Drone Weight Project ===\n`;
+            txt += `Project Name: ${project.name}\n`;
+            txt += `Description: ${project.description}\n`;
+            txt += `Rotors: ${project.rotorCount}\n`;
+            if (project.targetTW) {
+                txt += `Target Thrust-to-Weight (optional): ${project.targetTW}\n`;
+            }
+            txt += `\n`;
+
+            txt += `--- Summary (Current Scenario) ---\n`;
+            txt += `Total Weight (g): ${totalWeightG.toFixed(2)}\n`;
+            txt += `Total Weight (kg): ${totalWeightKg.toFixed(3)}\n`;
+            txt += `Weight per motor (kg): ${weightPerMotor.toFixed(4)}\n`;
+            txt += `\n`;
+
+            // Category breakdown
+            const categoryBreakdown = {};
+            enabledItems.forEach(item => {
+                const category = item.category;
+                if (!categoryBreakdown[category]) {
+                    categoryBreakdown[category] = [];
+                }
+                categoryBreakdown[category].push(item);
+            });
+
+            txt += `By Category:\n`;
+            Object.entries(categoryBreakdown).forEach(([cat, items]) => {
+                const total = items.reduce((sum, item) => sum + (item.qty * item.weightPerUnit), 0);
+                txt += `- ${cat}: ${total.toFixed(2)} g\n`;
+            });
+            txt += `\n`;
+
+            // Drone-specific calculations
+            if (project.motorThrust && project.rotorCount > 0) {
+                const totalThrust = project.motorThrust * project.rotorCount;
+                const twRatio = totalThrust / totalWeightG;
+                txt += `Drone-specific:\n`;
+                txt += `- Estimated motor max thrust (per motor): ${project.motorThrust} g\n`;
+                txt += `- Total max thrust: ${totalThrust.toFixed(2)} g\n`;
+                txt += `- Thrust-to-weight ratio: ${twRatio.toFixed(2)}\n`;
+                txt += `\n`;
+            }
+
+            // Items detail
+            txt += `--- Items ---\n`;
+            Object.entries(categoryBreakdown).forEach(([cat, items]) => {
+                txt += `\n[${cat}]\n`;
+                items.forEach(item => {
+                    const subtotal = item.qty * item.weightPerUnit;
+                    txt += `- Name: ${item.name}\n`;
+                    txt += `  Qty: ${item.qty}\n`;
+                    txt += `  Unit weight: ${item.weightPerUnit.toFixed(2)} g`;
+                    if (item.isEstimation) {
+                        txt += ` (Estimation*)`;
+                    }
+                    txt += `\n`;
+                    txt += `  Subtotal: ${subtotal.toFixed(2)} g`;
+                    if (item.isEstimation) {
+                        txt += ` (Estimation*)`;
+                    }
+                    txt += `\n`;
+                    if (item.notes) {
+                        txt += `  Notes: ${item.notes}\n`;
+                    }
+                });
+            });
+
+            txt += `\n--- Notes ---\n`;
+            txt += `- Unit: grams (g)\n`;
+            txt += `- All weights measured or estimated including mounting hardware.\n`;
+            const estimationCount = enabledItems.filter(item => item.isEstimation).length;
+            if (estimationCount > 0) {
+                const estimationWeight = enabledItems.filter(item => item.isEstimation)
+                    .reduce((sum, item) => sum + (item.qty * item.weightPerUnit), 0);
+                txt += `- Items marked with "Estimation*" have estimated weights (${estimationCount} item${estimationCount > 1 ? 's' : ''}, ${estimationWeight.toFixed(2)} g total).\n`;
+            }
+
+            // Download
+            const blob = new Blob([txt], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${project.name.replace(/\s+/g, '_')}_weight_report.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportJSON() {
+            const data = {
+                project,
+                items,
+                scenarios,
+                exportDate: new Date().toISOString()
+            };
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${project.name.replace(/\s+/g, '_')}_project.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importJSON() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            if (data.project) project = data.project;
+                            if (data.items) items = data.items;
+                            if (data.scenarios) scenarios = data.scenarios;
+
+                            // Update UI
+                            document.getElementById('projectName').value = project.name || '';
+                            document.getElementById('projectDescription').value = project.description || '';
+                            document.getElementById('targetAUW').value = project.targetAUW || '';
+                            document.getElementById('targetTW').value = project.targetTW || '';
+                            document.getElementById('motorThrust').value = project.motorThrust || '';
+                            
+                            const rotorSelect = document.getElementById('rotorCount');
+                            if ([3, 4, 6, 8].includes(project.rotorCount)) {
+                                rotorSelect.value = project.rotorCount;
+                                document.getElementById('customRotorCount').style.display = 'none';
+                            } else {
+                                rotorSelect.value = 'custom';
+                                document.getElementById('customRotorCount').style.display = 'block';
+                                document.getElementById('customRotorCount').value = project.rotorCount;
+                            }
+
+                            renderItems();
+                            updateSummary();
+                            updateScenarioSelect();
+                            saveToStorage();
+                            // 导入后标记为已保存
+                            hasUnsavedChanges = false;
+                            updateSaveStatus();
+                            alert('Project imported successfully!');
+                        } catch (error) {
+                            alert('Error importing JSON: ' + error.message);
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function saveCurrentScenario() {
+            if (!project.name || !project.name.trim()) {
+                alert('Please enter a project name first.');
+                document.getElementById('projectName').focus();
+                return;
+            }
+            
+            const scenarioName = project.name.trim();
+            
+            if (currentScenarioName && scenarios[currentScenarioName]) {
+                // 如果项目名称改变了，需要重命名场景
+                if (currentScenarioName !== scenarioName) {
+                    renameScenario(currentScenarioName, scenarioName);
+                } else {
+                    // 覆盖保存当前场景
+                    scenarios[scenarioName] = {
+                        name: scenarioName,
+                        project: { ...project },
+                        items: items.map(item => ({ ...item })),
+                        savedAt: new Date().toISOString()
+                    };
+                    updateScenarioSelect();
+                    saveToStorage();
+                    updateCurrentScenarioInfo();
+                    // 保存场景后标记为已保存
+                    hasUnsavedChanges = false;
+                    updateSaveStatus();
+                }
+                // 不显示弹窗，静默保存
+            } else {
+                // 没有当前场景，使用项目名称创建新场景
+                if (scenarios[scenarioName]) {
+                    if (confirm(`Scenario "${scenarioName}" already exists. Overwrite?`)) {
+                        scenarios[scenarioName] = {
+                            name: scenarioName,
+                            project: { ...project },
+                            items: items.map(item => ({ ...item })),
+                            savedAt: new Date().toISOString()
+                        };
+                        currentScenarioName = scenarioName;
+                        updateScenarioSelect();
+                        saveToStorage();
+                        updateCurrentScenarioInfo();
+                        hasUnsavedChanges = false;
+                        updateSaveStatus();
+                    }
+                } else {
+                    scenarios[scenarioName] = {
+                        name: scenarioName,
+                        project: { ...project },
+                        items: items.map(item => ({ ...item })),
+                        savedAt: new Date().toISOString()
+                    };
+                    currentScenarioName = scenarioName;
+                    updateScenarioSelect();
+                    saveToStorage();
+                    updateCurrentScenarioInfo();
+                    hasUnsavedChanges = false;
+                    updateSaveStatus();
+                }
+            }
+        }
+
+        function getNextAvailableName(baseName) {
+            if (!scenarios[baseName]) {
+                return baseName;
+            }
+            
+            let counter = 1;
+            let newName;
+            do {
+                newName = `${baseName} (${counter})`;
+                counter++;
+            } while (scenarios[newName] && counter < 1000);
+            
+            return newName;
+        }
+
+        function saveScenarioAs() {
+            if (!project.name || !project.name.trim()) {
+                alert('Please enter a project name first.');
+                document.getElementById('projectName').focus();
+                return;
+            }
+            
+            const baseName = project.name.trim();
+            const scenarioName = baseName;
+            
+            if (scenarios[scenarioName]) {
+                // 场景已存在，生成建议的新名称
+                const suggestedName = getNextAvailableName(baseName);
+                const newName = prompt(`Scenario "${scenarioName}" already exists.\n\nEnter a new name:`, suggestedName);
+                
+                if (newName && newName.trim()) {
+                    const trimmedName = newName.trim();
+                    
+                    if (scenarios[trimmedName] && trimmedName !== scenarioName) {
+                        if (confirm(`Scenario "${trimmedName}" also exists. Overwrite?`)) {
+                            scenarios[trimmedName] = {
+                                name: trimmedName,
+                                project: { ...project },
+                                items: items.map(item => ({ ...item })),
+                                savedAt: new Date().toISOString()
+                            };
+                            currentScenarioName = trimmedName;
+                            updateScenarioSelect();
+                            saveToStorage();
+                            updateCurrentScenarioInfo();
+                            hasUnsavedChanges = false;
+                            updateSaveStatus();
+                            alert(`Scenario "${trimmedName}" saved!`);
+                        }
+                    } else {
+                        scenarios[trimmedName] = {
+                            name: trimmedName,
+                            project: { ...project },
+                            items: items.map(item => ({ ...item })),
+                            savedAt: new Date().toISOString()
+                        };
+                        currentScenarioName = trimmedName;
+                        updateScenarioSelect();
+                        saveToStorage();
+                        updateCurrentScenarioInfo();
+                        hasUnsavedChanges = false;
+                        updateSaveStatus();
+                        alert(`Scenario "${trimmedName}" saved!`);
+                    }
+                }
+            } else {
+                scenarios[scenarioName] = {
+                    name: scenarioName,
+                    project: { ...project },
+                    items: items.map(item => ({ ...item })),
+                    savedAt: new Date().toISOString()
+                };
+                currentScenarioName = scenarioName;
+                updateScenarioSelect();
+                saveToStorage();
+                updateCurrentScenarioInfo();
+                hasUnsavedChanges = false;
+                updateSaveStatus();
+                alert(`Scenario "${scenarioName}" saved!`);
+            }
+        }
+
+        function renameScenario(oldName, newName) {
+            if (!newName || !newName.trim()) {
+                return;
+            }
+            
+            if (oldName === newName.trim()) {
+                return;  // 名称没变，不需要重命名
+            }
+            
+            const trimmedNewName = newName.trim();
+            
+            // 如果新名称已存在且不是当前场景，提示用户
+            if (scenarios[trimmedNewName] && trimmedNewName !== oldName) {
+                if (confirm(`Scenario "${trimmedNewName}" already exists. Overwrite?`)) {
+                    delete scenarios[oldName];
+                } else {
+                    // 用户取消，恢复项目名称
+                    project.name = oldName;
+                    document.getElementById('projectName').value = oldName;
+                    return;
+                }
+            }
+            
+            // 重命名场景
+            if (scenarios[oldName]) {
+                scenarios[trimmedNewName] = {
+                    name: trimmedNewName,
+                    project: { ...project },
+                    items: scenarios[oldName].items.map(item => ({ ...item })),
+                    savedAt: new Date().toISOString()
+                };
+                delete scenarios[oldName];
+                currentScenarioName = trimmedNewName;
+                updateScenarioSelect();
+                saveToStorage();
+                updateCurrentScenarioInfo();
+                hasUnsavedChanges = false;
+                updateSaveStatus();
+            }
+        }
+
+        function loadScenario() {
+            const select = document.getElementById('scenarioSelect');
+            const scenarioName = select.value;
+            if (scenarioName && scenarios[scenarioName]) {
+                const scenario = scenarios[scenarioName];
+                
+                // 设置当前场景名称（应该和项目名称一致）
+                currentScenarioName = scenarioName;
+                
+                // 恢复项目设置
+                if (scenario.project) {
+                    project = { ...scenario.project };
+                    
+                    // 确保项目名称和场景名称一致
+                    project.name = scenarioName;
+                    
+                    // 更新 UI
+                    document.getElementById('projectName').value = project.name || '';
+                    document.getElementById('projectDescription').value = project.description || '';
+                    document.getElementById('targetAUW').value = project.targetAUW || '';
+                    document.getElementById('targetTW').value = project.targetTW || '';
+                    document.getElementById('motorThrust').value = project.motorThrust || '';
+                    
+                    // 更新电机数量下拉框
+                    const rotorSelect = document.getElementById('rotorCount');
+                    if ([3, 4, 6, 8].includes(project.rotorCount)) {
+                        rotorSelect.value = String(project.rotorCount);
+                        document.getElementById('customRotorCount').style.display = 'none';
+                    } else {
+                        rotorSelect.value = 'custom';
+                        document.getElementById('customRotorCount').style.display = 'block';
+                        document.getElementById('customRotorCount').value = project.rotorCount;
+                    }
+                }
+                
+                // 恢复项目列表，确保 isEstimation、group 和 image 字段存在（向后兼容）
+                items = scenario.items.map(item => ({
+                    ...item,
+                    isEstimation: item.isEstimation || false,
+                    group: item.group || '',
+                    image: item.image || null
+                }));
+                renderItems();
+                updateSummary();
+                updateGroupSelects();
+                saveToStorage();
+                updateCurrentScenarioInfo();
+                // 加载场景后标记为已保存（因为是从存储加载的）
+                hasUnsavedChanges = false;
+                updateSaveStatus();
+                document.getElementById('deleteScenarioBtn').style.display = 'inline-block';
+            } else {
+                // 没有选中场景，清除当前场景
+                currentScenarioName = null;
+                updateCurrentScenarioInfo();
+                document.getElementById('deleteScenarioBtn').style.display = 'none';
+            }
+        }
+
+        function deleteScenario() {
+            const select = document.getElementById('scenarioSelect');
+            const scenarioName = select.value;
+            if (scenarioName && confirm(`Delete scenario "${scenarioName}"?`)) {
+                delete scenarios[scenarioName];
+                select.value = '';
+                if (currentScenarioName === scenarioName) {
+                    currentScenarioName = null;  // 清除当前场景
+                }
+                updateScenarioSelect();
+                updateCurrentScenarioInfo();
+                document.getElementById('deleteScenarioBtn').style.display = 'none';
+                saveToStorage();
+                hasUnsavedChanges = false;
+                updateSaveStatus();
+            }
+        }
+
+        function updateScenarioSelect() {
+            const select = document.getElementById('scenarioSelect');
+            const current = select.value || currentScenarioName;
+            select.innerHTML = '<option value="">Select Project...</option>';
+            Object.keys(scenarios).forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+            if (current && scenarios[current]) {
+                select.value = current;
+            }
+        }
+
+        function updateCurrentScenarioInfo() {
+            const infoDiv = document.getElementById('currentScenarioInfo');
+            if (currentScenarioName && scenarios[currentScenarioName]) {
+                const scenario = scenarios[currentScenarioName];
+                const savedDate = new Date(scenario.savedAt);
+                const timeStr = savedDate.toLocaleString();
+                infoDiv.textContent = `Current project/scenario: "${currentScenarioName}" (Last saved: ${timeStr})`;
+                infoDiv.style.color = '#000000';
+            } else {
+                infoDiv.textContent = 'No project saved. Enter a project name and click "Save" or "Save As..." to save.';
+                infoDiv.style.color = '#666666';
+            }
+        }
+
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all items? This cannot be undone.')) {
+                items = [];
+                renderItems();
+                updateSummary();
+                markAsUnsaved();
+            }
+        }
+
+        function markAsUnsaved() {
+            hasUnsavedChanges = true;
+            updateSaveStatus();
+        }
+
+        function saveToStorage() {
+            if (isSaving) return;  // 防止重复保存
+            
+            isSaving = true;
+            updateSaveStatus();
+            
+            // 如果当前有场景，更新场景数据（确保场景包含最新的 items，包括 isEstimation）
+            if (currentScenarioName && project.name && project.name.trim() === currentScenarioName) {
+                scenarios[currentScenarioName] = {
+                    name: currentScenarioName,
+                    project: { ...project },
+                    items: items.map(item => ({ ...item })),  // 确保包含所有字段，包括 isEstimation
+                    savedAt: new Date().toISOString()
+                };
+            }
+            
+            const data = {
+                project,
+                items,
+                scenarios,
+                currentScenarioName,  // 保存当前场景名称
+                groups,  // 保存组列表
+                groupDisplayMode  // 保存分组显示模式状态
+            };
+            localStorage.setItem('droneWeightCalculator', JSON.stringify(data));
+            
+            // 延迟一点再更新状态，让用户看到 "Saving..." 的效果
+            setTimeout(() => {
+                hasUnsavedChanges = false;
+                isSaving = false;
+                updateSaveStatus();
+            }, 300);
+        }
+
+        function startAutosave() {
+            // 清除之前的定时器
+            if (autosaveInterval) {
+                clearInterval(autosaveInterval);
+            }
+            
+            // 每3秒自动保存一次（如果有未保存的更改）
+            autosaveInterval = setInterval(() => {
+                if (hasUnsavedChanges && !isSaving) {
+                    saveToStorage();
+                }
+            }, 3000);
+            
+            // 页面关闭前也自动保存一次
+            window.addEventListener('beforeunload', () => {
+                if (hasUnsavedChanges) {
+                    // 同步保存（beforeunload 中异步操作可能不会执行）
+                    const data = {
+                        project,
+                        items,
+                        scenarios,
+                        currentScenarioName
+                    };
+                    localStorage.setItem('droneWeightCalculator', JSON.stringify(data));
+                }
+            });
+        }
+
+        function updateSaveStatus() {
+            const statusIcon = document.getElementById('saveStatusIcon');
+            const statusText = document.getElementById('saveStatusText');
+            
+            if (!statusIcon || !statusText) return;
+            
+            if (isSaving) {
+                // 正在保存 - 黄色闪烁
+                statusIcon.style.background = '#FFFF00';
+                statusIcon.style.animation = 'pulse 1s infinite';
+                statusText.textContent = 'Saving...';
+                statusText.style.color = '#000000';
+            } else if (hasUnsavedChanges) {
+                // 有未保存的更改 - 红色
+                statusIcon.style.background = '#C00000';
+                statusIcon.style.animation = 'none';
+                statusText.textContent = 'Unsaved changes';
+                statusText.style.color = '#C00000';
+            } else {
+                // 已保存 - 绿色
+                statusIcon.style.background = '#00C000';
+                statusIcon.style.animation = 'none';
+                statusText.textContent = 'All changes saved';
+                statusText.style.color = '#000000';
+            }
+        }
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem('droneWeightCalculator');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.project) {
+                        project = { ...project, ...data.project };
+                        document.getElementById('projectName').value = project.name || '';
+                        document.getElementById('projectDescription').value = project.description || '';
+                        document.getElementById('targetAUW').value = project.targetAUW || '';
+                        document.getElementById('targetTW').value = project.targetTW || '';
+                        document.getElementById('motorThrust').value = project.motorThrust || '';
+                        
+                        const rotorSelect = document.getElementById('rotorCount');
+                        if ([3, 4, 6, 8].includes(project.rotorCount)) {
+                            rotorSelect.value = project.rotorCount;
+                        } else {
+                            rotorSelect.value = 'custom';
+                            document.getElementById('customRotorCount').style.display = 'block';
+                            document.getElementById('customRotorCount').value = project.rotorCount;
+                        }
+                    }
+                    if (data.items) {
+                        // 确保所有 items 都有 isEstimation、group 和 image 字段（向后兼容）
+                        items = data.items.map(item => ({
+                            ...item,
+                            isEstimation: item.isEstimation || false,
+                            group: item.group || '',
+                            image: item.image || null
+                        }));
+                    }
+                    if (data.scenarios) {
+                        // 确保场景中的 items 也有 isEstimation、group 和 image 字段（向后兼容）
+                        scenarios = {};
+                        Object.keys(data.scenarios).forEach(key => {
+                            scenarios[key] = {
+                                ...data.scenarios[key],
+                                items: data.scenarios[key].items ? data.scenarios[key].items.map(item => ({
+                                    ...item,
+                                    isEstimation: item.isEstimation || false,
+                                    group: item.group || '',
+                                    image: item.image || null
+                                })) : []
+                            };
+                        });
+                    }
+                    if (data.groups) {
+                        groups = data.groups;
+                    }
+                    if (data.groupDisplayMode !== undefined) {
+                        groupDisplayMode = data.groupDisplayMode;
+                        document.getElementById('groupDisplayToggle').checked = groupDisplayMode;
+                        document.getElementById('groupManagerBtn').style.display = groupDisplayMode ? 'inline-block' : 'none';
+                    }
+                    if (data.currentScenarioName && scenarios[data.currentScenarioName]) {
+                        currentScenarioName = data.currentScenarioName;
+                        // 如果保存了当前场景，自动加载它
+                        const select = document.getElementById('scenarioSelect');
+                        select.value = currentScenarioName;
+                        // 注意：这里不调用 loadScenario()，因为 UI 还没准备好
+                        // 会在初始化完成后通过 updateScenarioSelect 恢复选中状态
+                    }
+                    renderItems();
+                    updateScenarioSelect();
+                    updateGroupSelects();
+                    // 加载存储后标记为已保存
+                    hasUnsavedChanges = false;
+                } catch (e) {
+                    console.error('Error loading from storage:', e);
+                }
+            } else {
+                // 没有存储数据，标记为已保存（初始状态）
+                hasUnsavedChanges = false;
+            }
+        }
+    </script>
+</body>
+</html>
