@@ -1,0 +1,11 @@
+{
+  "host": "192.168.137.172",
+  "port": 2101,
+  "mountpoint": "RTCM4",
+  "username": "XTRTK",
+  "password": "123456",
+  "rtcm_messages": [1074, 1084, 1094, 1124, 1005, 1006, 1033],
+  "receiver_option": "",
+  "debug": true
+}
+
