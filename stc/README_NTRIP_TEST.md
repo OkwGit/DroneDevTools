@@ -79,3 +79,4 @@ You can modify these in the script if needed.
 - Others are continuous (1074, 1084, 1094)
 - Missing types might be normal depending on base station configuration
 
+

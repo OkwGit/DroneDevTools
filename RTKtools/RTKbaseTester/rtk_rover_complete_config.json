@@ -1,0 +1,17 @@
+{
+  "ntrip_host": "192.168.137.172",
+  "ntrip_port": 2101,
+  "ntrip_mountpoint": "RTCM4",
+  "ntrip_username": "XTRTK",
+  "ntrip_password": "123456",
+  
+  "rover_port": "COM3",
+  "rover_baudrate": 115200,
+  "rover_timeout": 1.0,
+  "auto_detect_rover": true,
+  "rover_device_name": "XTRTK",
+  
+  "display_interval": 0.5,
+  "stats_interval": 5.0
+}
+
