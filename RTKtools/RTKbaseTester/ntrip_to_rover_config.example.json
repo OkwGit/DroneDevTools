@@ -1,0 +1,24 @@
+{
+  "_comment": "NTRIP to Rover Bridge Configuration",
+  "_instructions": "Copy this file to ntrip_to_rover_config.json and modify for your setup",
+  
+  "ntrip_host": "192.168.137.172",
+  "ntrip_port": 2101,
+  "ntrip_mountpoint": "RTCM4",
+  "ntrip_username": "XTRTK",
+  "ntrip_password": "123456",
+  
+  "rover_port": "COM3",
+  "_rover_port_note": "Serial port for rover (COM3, COM4, etc.). Set to 'AUTO' for auto-detection",
+  
+  "rover_baudrate": 115200,
+  "_rover_baudrate_note": "Common values: 9600, 38400, 115200",
+  
+  "rover_timeout": 1.0,
+  "auto_detect_rover": true,
+  "rover_device_name": "XTRTK",
+  
+  "stats_interval": 5.0,
+  "_stats_interval_note": "Print statistics every N seconds"
+}
+

@@ -1,0 +1,9 @@
+Time       : 2026-01-15 08:20:29
+NTRIP Host : 192.168.137.172:2101
+Mountpoint : RTCM4
+Rover Port : COM3
+
+Result     : NO DATA
+
+Error      :
+  Failed to connect to rover

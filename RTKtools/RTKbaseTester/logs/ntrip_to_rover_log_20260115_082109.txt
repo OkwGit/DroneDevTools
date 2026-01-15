@@ -1,0 +1,13 @@
+Time       : 2026-01-15 08:21:09
+NTRIP Host : 192.168.137.172:2101
+Mountpoint : RTCM4
+Rover Port : COM3
+
+Result     : DATA FORWARDED
+Duration   : 28.0 s
+Received   : 124 bytes
+Sent       : 0 bytes
+Rx Rate    : 4.4 B/s
+Tx Rate    : 0.0 B/s
+
+Error      : (none)

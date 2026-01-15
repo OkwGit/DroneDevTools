@@ -1,0 +1,10 @@
+Time       : 2026-01-15 06:16:33
+Host       : 192.168.137.172
+Port       : 2101
+Mountpoint : RTCM4
+Username   : XTRTK
+
+Result     : NO DATA (connection failed before stream)
+
+Error      :
+  Failed to connect to NTRIP caster: [WinError 10061] No connection could be made because the target machine actively refused it

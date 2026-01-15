@@ -1,0 +1,20 @@
+Time       : 2026-01-15 07:56:00
+Host       : 192.168.137.172
+Port       : 2101
+Mountpoint : RTCM4
+Username   : XTRTK
+
+Result     : STREAM RECEIVED
+Duration   : 1082.9 s
+Bytes      : 393066
+Avg rate   : 363.0 B/s
+RTCM types :
+  - 1005: 35
+  - 1006: 35
+  - 1033: 35
+  - 1074: 1083
+  - 1084: 1083
+  - 1094: 1083
+  - 1124: 1083
+
+Error      : (none)

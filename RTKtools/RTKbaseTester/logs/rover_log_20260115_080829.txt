@@ -1,0 +1,12 @@
+Time       : 2026-01-15 08:08:29
+Port       : COM3
+Baudrate   : 115200
+
+Best Fix   : No Fix (Quality 0)
+Total Updates: 397
+
+Fix Type Distribution:
+  No Fix: 397
+
+
+Error      : (none)

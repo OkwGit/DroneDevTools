@@ -1,0 +1,20 @@
+{
+  "_comment": "RTK Rover Tester Configuration",
+  "_instructions": "Copy this file to rover_config.json and modify for your setup",
+  
+  "port": "COM3",
+  "_port_note": "Serial port name (COM3, COM4, etc. on Windows). Set to 'AUTO' for auto-detection",
+  
+  "baudrate": 115200,
+  "_baudrate_note": "Common values: 9600, 38400, 115200",
+  
+  "timeout": 1.0,
+  "_timeout_note": "Serial port timeout in seconds",
+  
+  "auto_detect": true,
+  "_auto_detect_note": "If true, automatically search for rover device",
+  
+  "device_name": "XTRTK",
+  "_device_name_note": "Part of device name to search for when auto-detecting"
+}
+
