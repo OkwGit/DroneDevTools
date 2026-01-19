@@ -95,6 +95,9 @@ class RTKRoverComplete:
         self.rtcm_buffer = bytearray()
         self.rtcm_msg_types = set()  # Track RTCM message types received
         self.rtcm_first_frame_time: Optional[float] = None  # Time when first RTCM frame received
+        self.rtcm_data_gap_threshold = 10.0  # Seconds without RTCM data to consider gap
+        self.rtcm_gaps = []  # Track RTCM data gaps
+        self.rtcm_last_chunk_time: Optional[float] = None  # Time of last RTCM chunk received
         
         # Rover data
         self.rover_data: Dict = {}
@@ -107,6 +110,12 @@ class RTKRoverComplete:
         self.initial_quality: Optional[int] = None
         self.quality_changes = []  # Track quality changes over time
         self.last_quality_update_time: Optional[float] = None
+        
+        # RTCM adoption confirmation signals
+        self.rtcm_adoption_confirmed = False
+        self.rtcm_adoption_time: Optional[float] = None
+        self.rtcm_adoption_method = None  # "quality_upgrade", "vendor_message", etc.
+        self.vendor_messages_received = []  # Track vendor-specific messages
         
         # Threading
         self.start_time = time.time()
@@ -386,6 +395,73 @@ class RTKRoverComplete:
         except (ValueError, IndexError):
             return None
     
+    def parse_vendor_messages(self, line: str) -> Optional[Dict]:
+        """Parse vendor-specific NMEA messages that may indicate RTCM adoption."""
+        # Check for common vendor-specific messages
+        vendor_indicators = {
+            "$P": "Proprietary",
+            "$PTNL": "Trimble",
+            "$PUBX": "u-blox",
+            "$PSRF": "SiRF",
+            "$PMTK": "MediaTek",
+            "$PQ": "Quectel",
+            "$UN": "Unicore",
+            "$GP": "Generic proprietary",
+        }
+        
+        # Check if line starts with vendor prefix
+        for prefix, vendor_name in vendor_indicators.items():
+            if line.startswith(prefix):
+                # Extract message type
+                parts = line.split(",")
+                msg_type = parts[0] if parts else ""
+                
+                # Check for RTK-related keywords
+                line_upper = line.upper()
+                rtk_keywords = ["RTK", "RTCM", "DIFF", "CORR", "BASE", "ROVER"]
+                has_rtk_keyword = any(keyword in line_upper for keyword in rtk_keywords)
+                
+                return {
+                    "vendor": vendor_name,
+                    "message_type": msg_type,
+                    "has_rtk_keyword": has_rtk_keyword,
+                    "raw_line": line[:100],  # Store first 100 chars
+                }
+        
+        return None
+    
+    def check_rtcm_adoption_signal(self, quality: int, vendor_msg: Optional[Dict] = None):
+        """Check for RTCM adoption confirmation signals."""
+        current_time = time.time()
+        elapsed = current_time - self.start_time
+        
+        # Signal 1: Quality upgrade to DGPS (2), RTK Float (5), or RTK Fixed (4)
+        if not self.rtcm_adoption_confirmed:
+            if quality in [QUALITY_DGPS, QUALITY_RTK_FLOAT, QUALITY_RTK_FIXED]:
+                # Check if this is an upgrade from initial quality
+                if self.initial_quality is not None:
+                    if quality > self.initial_quality:
+                        self.rtcm_adoption_confirmed = True
+                        self.rtcm_adoption_time = elapsed
+                        self.rtcm_adoption_method = f"quality_upgrade_to_{QUALITY_NAMES.get(quality, 'Unknown')}"
+                    elif quality >= QUALITY_RTK_FLOAT:
+                        # Even if initial was already high, RTK Float/Fixed confirms adoption
+                        self.rtcm_adoption_confirmed = True
+                        self.rtcm_adoption_time = elapsed
+                        self.rtcm_adoption_method = f"rtk_mode_{QUALITY_NAMES.get(quality, 'Unknown')}"
+        
+        # Signal 2: Vendor-specific messages with RTK keywords
+        if vendor_msg and vendor_msg.get("has_rtk_keyword"):
+            if not self.rtcm_adoption_confirmed:
+                self.rtcm_adoption_confirmed = True
+                self.rtcm_adoption_time = elapsed
+                self.rtcm_adoption_method = f"vendor_message_{vendor_msg.get('vendor', 'Unknown')}"
+            
+            # Store vendor message
+            with self.lock:
+                if vendor_msg not in self.vendor_messages_received:
+                    self.vendor_messages_received.append(vendor_msg)
+    
     def validate_rtcm_data(self, data: bytes):
         """Validate RTCM3 data and count valid frames."""
         self.rtcm_buffer.extend(data)
@@ -543,8 +619,22 @@ class RTKRoverComplete:
                         print("⚠️  NTRIP connection closed by server.")
                         break
                     
+                    current_time = time.time()
+                    
+                    # Check for RTCM data gaps
+                    if self.rtcm_last_chunk_time is not None:
+                        gap_duration = current_time - self.rtcm_last_chunk_time
+                        if gap_duration > self.rtcm_data_gap_threshold:
+                            with self.lock:
+                                self.rtcm_gaps.append({
+                                    "start": self.rtcm_last_chunk_time - self.start_time,
+                                    "end": current_time - self.start_time,
+                                    "duration": gap_duration,
+                                })
+                    
                     with self.lock:
                         self.rtcm_received += len(chunk)
+                        self.rtcm_last_chunk_time = current_time
                     
                     # Validate RTCM data
                     self.validate_rtcm_data(chunk)
@@ -591,6 +681,9 @@ class RTKRoverComplete:
                             if self.initial_quality is None:
                                 self.initial_quality = quality
                             
+                            # Check for RTCM adoption signal via quality upgrade
+                            self.check_rtcm_adoption_signal(quality)
+                            
                             # Track quality changes
                             current_time = time.time()
                             if quality != self.rover_data.get("quality"):
@@ -611,6 +704,14 @@ class RTKRoverComplete:
                                 if quality == QUALITY_RTK_FIXED and self.rtk_fixed_time is None:
                                     self.rtk_fixed_time = elapsed
                             self.data_history.append(self.rover_data.copy())
+                    
+                    # Check for vendor-specific messages
+                    vendor_msg = self.parse_vendor_messages(line)
+                    if vendor_msg:
+                        self.check_rtcm_adoption_signal(
+                            self.rover_data.get("quality", QUALITY_NO_FIX),
+                            vendor_msg
+                        )
                     
                     rmc_data = self.parse_nmea_rmc(line)
                     if rmc_data:
@@ -668,12 +769,59 @@ class RTKRoverComplete:
             time_since = elapsed - (rtcm_status['rtcm_last_received'] - self.start_time)
             if time_since < 5.0:
                 print(f"   Last Valid Frame: {time_since:.1f}s ago ✅")
-            else:
+            elif time_since < 30.0:
                 print(f"   Last Valid Frame: {time_since:.1f}s ago ⚠️")
+            else:
+                print(f"   Last Valid Frame: {time_since:.1f}s ago ❌ (Data stream may be interrupted)")
+        
+        # RTCM Data Stream Health
+        with self.lock:
+            if self.rtcm_last_chunk_time:
+                time_since_chunk = elapsed - (self.rtcm_last_chunk_time - self.start_time)
+                if time_since_chunk > 10.0:
+                    print(f"   ⚠️  RTCM Stream Gap: {time_since_chunk:.1f}s since last chunk")
+                    print(f"      → Check NTRIP connection or base station")
+            
+            if self.rtcm_gaps:
+                total_gap_time = sum(g["duration"] for g in self.rtcm_gaps)
+                gap_percentage = (total_gap_time / elapsed * 100) if elapsed > 0 else 0
+                print(f"   📊 Data Gaps: {len(self.rtcm_gaps)} gaps, {total_gap_time:.1f}s total ({gap_percentage:.1f}%)")
+                if gap_percentage > 20:
+                    print(f"      ⚠️  High gap percentage - RTCM stream unstable")
+        
+        # RTCM → GNSS Adoption Confirmation Signal
+        print(f"\n📡 RTCM → GNSS Adoption Confirmation:")
+        with self.lock:
+            if self.rtcm_adoption_confirmed:
+                print(f"   ✅ CONFIRMED: Rover is using RTCM data")
+                if self.rtcm_adoption_time:
+                    print(f"   Confirmed at: {self.rtcm_adoption_time:.1f}s")
+                if self.rtcm_adoption_method:
+                    method_display = self.rtcm_adoption_method.replace("_", " ").title()
+                    print(f"   Method: {method_display}")
+                
+                # Show quality-based confirmation
+                current_quality = self.rover_data.get("quality", QUALITY_NO_FIX)
+                if current_quality in [QUALITY_DGPS, QUALITY_RTK_FLOAT, QUALITY_RTK_FIXED]:
+                    quality_name = QUALITY_NAMES.get(current_quality, "Unknown")
+                    print(f"   Signal: NMEA GGA Quality = {current_quality} ({quality_name})")
+                
+                # Show vendor messages if any
+                if self.vendor_messages_received:
+                    print(f"   Vendor Messages: {len(self.vendor_messages_received)} detected")
+                    for i, vmsg in enumerate(self.vendor_messages_received[:3], 1):
+                        vendor = vmsg.get("vendor", "Unknown")
+                        msg_type = vmsg.get("message_type", "")[:20]
+                        print(f"      {i}. {vendor}: {msg_type}")
+            else:
+                print(f"   ⏳ PENDING: Waiting for adoption confirmation signal...")
+                print(f"   Expected signals:")
+                print(f"      - NMEA GGA Quality = 2 (DGPS), 4 (RTK Fixed), or 5 (RTK Float)")
+                print(f"      - Vendor-specific messages with RTK keywords")
         
         # RTK Convergence Estimate
         if rtcm_status['rtk_convergence_estimate']:
-            print(f"   ⏳ {rtcm_status['rtk_convergence_estimate']}")
+            print(f"\n   ⏳ {rtcm_status['rtk_convergence_estimate']}")
         
         # Quality change indicator
         with self.lock:
@@ -916,6 +1064,35 @@ class RTKRoverComplete:
             if rtcm_status['rtcm_msg_types']:
                 lines.append(f"  RTCM Types    : {', '.join(map(str, rtcm_status['rtcm_msg_types']))}")
             lines.append(f"  Rover Using   : {'Yes' if rtcm_status['rover_using_rtcm'] else 'No'}")
+            lines.append("")
+            
+            # RTCM → GNSS Adoption Confirmation
+            lines.append("RTCM → GNSS Adoption Confirmation:")
+            with self.lock:
+                if self.rtcm_adoption_confirmed:
+                    lines.append(f"  Status        : ✅ CONFIRMED")
+                    if self.rtcm_adoption_time:
+                        lines.append(f"  Confirmed At  : {self.rtcm_adoption_time:.1f}s")
+                    if self.rtcm_adoption_method:
+                        method_display = self.rtcm_adoption_method.replace("_", " ").title()
+                        lines.append(f"  Method        : {method_display}")
+                    
+                    # Show quality-based confirmation
+                    current_quality = self.rover_data.get("quality", QUALITY_NO_FIX)
+                    if current_quality in [QUALITY_DGPS, QUALITY_RTK_FLOAT, QUALITY_RTK_FIXED]:
+                        quality_name = QUALITY_NAMES.get(current_quality, "Unknown")
+                        lines.append(f"  Signal        : NMEA GGA Quality = {current_quality} ({quality_name})")
+                    
+                    # Show vendor messages
+                    if self.vendor_messages_received:
+                        lines.append(f"  Vendor Msgs   : {len(self.vendor_messages_received)} detected")
+                        for vmsg in self.vendor_messages_received:
+                            vendor = vmsg.get("vendor", "Unknown")
+                            msg_type = vmsg.get("message_type", "")
+                            lines.append(f"    - {vendor}: {msg_type}")
+                else:
+                    lines.append(f"  Status        : ⏳ PENDING")
+                    lines.append(f"  Expected      : NMEA GGA Quality = 2/4/5 or vendor messages")
             lines.append("")
             
             if self.data_history:

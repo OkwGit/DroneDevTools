@@ -1,0 +1,14 @@
+Time       : 2026-01-15 09:31:44
+Port       : COM3
+Baudrate   : 115200
+
+Best Fix   : GPS (Quality 1)
+Total Updates: 6534
+
+Fix Type Distribution:
+  GPS: 6534
+
+Last Position: 43.70606845°N, -79.45973708°E
+Last Altitude: 137.88 m
+
+Error      : (none)

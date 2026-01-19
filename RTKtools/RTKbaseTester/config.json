@@ -1,5 +1,5 @@
 {
-  "host": "192.168.137.172",
+  "host": "192.168.137.21",
   "port": 2101,
   "mountpoint": "RTCM4",
   "username": "XTRTK",

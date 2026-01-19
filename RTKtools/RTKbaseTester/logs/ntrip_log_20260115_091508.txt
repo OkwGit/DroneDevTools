@@ -1,0 +1,10 @@
+Time       : 2026-01-15 09:15:08
+Host       : 192.168.137.21
+Port       : 2101
+Mountpoint : RTCM4
+Username   : XTRTK
+
+Result     : NO DATA (connection failed before stream)
+
+Error      :
+  Failed to connect to NTRIP caster: Timed out while waiting for NTRIP response header.
