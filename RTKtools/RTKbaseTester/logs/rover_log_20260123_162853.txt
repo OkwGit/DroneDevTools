@@ -1,0 +1,7 @@
+Time       : 2026-01-23 16:28:53
+Port       : COM4
+Baudrate   : 115200
+
+Result     : NO DATA RECEIVED
+
+Error      : (none)
