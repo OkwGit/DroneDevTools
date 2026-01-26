@@ -309,3 +309,4 @@ chmod +x /tmp/diagnose_serial.sh
 **End of Diagnosis**
 
 
+
