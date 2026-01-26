@@ -1,0 +1,22 @@
+#cloud-config
+
+hostname: basegnss
+manage_etc_hosts: true
+
+groups:
+  - gnssuser
+
+users:
+  - name: basegnss
+    lock_passwd: false
+    groups: gnssuser
+    plain_text_passwd: basegnss!
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+
+runcmd:
+  - systemctl restart avahi-daemon
+  - rfkill unblock all
+  - cd /home/basegnss/rtkbase/tools && sudo ./install.sh --user basegnss --unit-files --detect-usb-gnss --configure-gnss --start-services
+
+final_message: "BaseGNSS OK"
+

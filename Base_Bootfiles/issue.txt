@@ -1,0 +1,2 @@
+Raspberry Pi reference 2023-02-28
+Generated using pi-gen, https://github.com/jancelin/pi-gen_RTKbase/, 87188044995020df362c164bf859e35c897e9230, stage4
