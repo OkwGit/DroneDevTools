@@ -6,6 +6,8 @@
   "password": "123456",
   "rtcm_messages": [1074, 1084, 1094, 1124, 1005, 1006, 1033],
   "receiver_option": "",
-  "debug": true
+  "debug": true,
+  "local_host": "127.0.0.1",
+  "local_port": 8888
 }
 
