@@ -1,0 +1,1209 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "35238ef7-ffdb-4f16-8db9-6f0c236a0719")
+	(paper "A4")
+	(lib_symbols
+		(symbol "Drones:6S_Lipo_EC5_Tattu"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "6S_Lipo_EC5f"
+				(at 0 -2.286 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "lipo /tattu/30c /22.2v /266.4wh/ EC5 female/ 12000mah"
+				(at -0.508 -9.144 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "6S_Lipo_EC5_Tattu_0_1"
+				(rectangle
+					(start -8.89 3.81)
+					(end 8.89 -3.81)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "6S_Lipo_EC5_Tattu_1_1"
+				(text "22.2V\n12000mah\n30C"
+					(at 5.588 1.27 0)
+					(effects
+						(font
+							(size 0.762 0.762)
+						)
+					)
+				)
+				(pin power_out line
+					(at -11.43 1.27 0)
+					(length 2.54)
+					(name "EC5_Female"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Drones:CUAV_CAN_PMU_LITE"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 1.27 1.524 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "DroneCAN CAN PMU module with inline high-current path. Measures VBAT voltage/current, provides regulated 5V output for flight controller, and reports battery data via CAN (UAVCAN/DroneCAN). XT60 VBAT_IN and VBAT_OUT pass-through; Power/CAN 6-pin connector. Input 10–62V; up to ~90A sensing. Left XT60 = VBAT_IN, right XT60 = VBAT_OUT."
+				(at 2.54 -13.208 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "CUAV_CAN_PMU_LITE_0_1"
+				(polyline
+					(pts
+						(xy -25.4 0) (xy -19.05 0) (xy -19.05 -3.81) (xy -25.4 -3.81)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -25.4 -3.81)
+					(mid -26.1891 -1.905)
+					(end -25.4 0)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -19.05 2.54)
+					(end -7.62 -7.62)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -13.97 2.54)
+					(end -8.89 1.27)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -8.89 0)
+					(end -7.62 -7.62)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "CUAV_CAN_PMU_LITE_1_1"
+				(text "CUAV_CAN_PMU_LITE"
+					(at -12.192 -9.398 0)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(pin input line
+					(at -21.59 2.54 0)
+					(length 2.54)
+					(name "XT60"
+						(effects
+							(font
+								(size 0.6604 0.6604)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at -5.08 2.54 180)
+					(length 2.54)
+					(name "XT60"
+						(effects
+							(font
+								(size 0.6604 0.6604)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -5.08 0 180)
+					(length 2.54)
+					(name "CAN_H"
+						(effects
+							(font
+								(size 0.6604 0.6604)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -5.08 -1.27 180)
+					(length 2.54)
+					(name "CAN_L"
+						(effects
+							(font
+								(size 0.6604 0.6604)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 180)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 0.6604 0.6604)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at -5.08 -3.81 180)
+					(length 2.54)
+					(name "5V_OUT"
+						(effects
+							(font
+								(size 0.6604 0.6604)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
+					(at -5.08 -5.08 180)
+					(length 2.54)
+					(name "NC_/_RESERVED"
+						(effects
+							(font
+								(size 0.6604 0.6604)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
+					(at -5.08 -6.35 180)
+					(length 2.54)
+					(name "NC_/_RESERVED"
+						(effects
+							(font
+								(size 0.6604 0.6604)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Drones:PM08_CAN_XT90"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "PM08_CAN"
+				(at 0.254 -15.494 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "holybro Power_Module"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "PM08_CAN_XT90_0_1"
+				(rectangle
+					(start -15.24 7.62)
+					(end -12.7 1.27)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -12.7 10.16)
+					(end 12.7 0)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -12.7 6.35)
+					(end -13.97 2.54)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -12.7 0)
+					(end 12.7 -6.35)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -11.43 -3.81)
+					(end -2.54 -5.08)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -10.16 -1.27) (xy -10.16 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -3.81 -1.27) (xy -3.81 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 2.54 -3.81)
+					(end 11.43 -5.08)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 3.81 -1.27) (xy 3.81 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 10.16 -1.27) (xy 10.16 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 12.7 7.62)
+					(end 15.24 1.27)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 12.7 6.35)
+					(end 13.97 2.54)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 12.7 5.08) (xy -2.54 5.08) (xy 12.7 5.08) (xy 12.7 6.35) (xy -2.54 6.35)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 12.7 2.54) (xy -2.54 2.54)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "PM08_CAN_XT90_1_1"
+				(text "Power & CAN Port: \nMolex CLIK-Mate 2mm 6Pin"
+					(at 11.938 -3.048 0)
+					(effects
+						(font
+							(size 0.508 0.508)
+						)
+						(justify left)
+					)
+				)
+				(text_box "Holybro\nPM08-CAN 14S, 200A"
+					(at -12.7 11.43 0)
+					(size 25.4 -11.43)
+					(margins 1.016 1.016 1.016 1.016)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+						(justify left top)
+					)
+				)
+				(text_box "POWER2(5.3V/3A)"
+					(at -11.43 -1.27 0)
+					(size 8.89 -3.81)
+					(margins 1.016 1.016 1.016 1.016)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+					(effects
+						(font
+							(size 0.508 0.508)
+						)
+						(justify left top)
+					)
+				)
+				(text_box "POWER1(5.3V/3A)"
+					(at 2.54 -1.27 0)
+					(size 8.89 -3.81)
+					(margins 1.016 1.016 1.016 1.016)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+					(effects
+						(font
+							(size 0.508 0.508)
+						)
+						(justify left top)
+					)
+				)
+				(pin power_out line
+					(at -17.78 3.81 0)
+					(length 5.08)
+					(name "<-XT90_FEMALE_OUT"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -10.16 -3.81 270)
+					(length 2.54)
+					(name "5V_P2"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -8.89 -3.81 270)
+					(length 2.54)
+					(name "5V_P2"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -7.62 -3.81 270)
+					(length 2.54)
+					(name "CAN_H_P2"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -6.35 -3.81 270)
+					(length 2.54)
+					(name "CAN_L_P2"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -3.81 270)
+					(length 2.54)
+					(name "GND_P2"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -3.81 -3.81 270)
+					(length 2.54)
+					(name "GND_P2"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 3.81 -3.81 270)
+					(length 2.54)
+					(name "5V_P1"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 5.08 -3.81 270)
+					(length 2.54)
+					(name "5V_P1"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 6.35 -3.81 270)
+					(length 2.54)
+					(name "CAN_H_P1"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 7.62 -3.81 270)
+					(length 2.54)
+					(name "CAN_L_P1"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 8.89 -3.81 270)
+					(length 2.54)
+					(name "GND_P1"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 10.16 -3.81 270)
+					(length 2.54)
+					(name "GND_P1"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 12.7 3.81 0)
+					(length 5.08)
+					(name "<-XT90_MALE_IN'"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
+	(text "not used due to low current support\n"
+		(exclude_from_sim no)
+		(at 161.29 169.418 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "92670f9a-f342-4684-8d81-2a6897547495")
+	)
+	(wire
+		(pts
+			(xy 134.62 189.23) (xy 134.62 162.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b366c1dc-eb63-4664-b88a-1926e416b1d3")
+	)
+	(wire
+		(pts
+			(xy 111.76 162.56) (xy 134.62 162.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ce7c389d-43d3-4162-ba6c-9c747108d500")
+	)
+	(rule_area
+		(polyline
+			(pts
+				(xy 146.05 158.75) (xy 146.05 180.34) (xy 175.26 180.34) (xy 175.26 160.02) (xy 173.99 158.75)
+			)
+			(stroke
+				(width 0)
+				(type dash)
+			)
+			(fill
+				(type color)
+				(color 255 117 0 1)
+			)
+			(uuid d0ad652e-dd7d-4449-ad8f-289e06e306a0)
+		)
+	)
+	(symbol
+		(lib_id "Drones:CUAV_CAN_PMU_LITE")
+		(at 175.26 168.91 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "154527d2-5f61-41fc-8ef3-378fdeaeb02a")
+		(property "Reference" "U1"
+			(at 160.9178 161.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "~"
+			(at 160.9178 163.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 175.26 168.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 175.26 168.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "DroneCAN CAN PMU module with inline high-current path. Measures VBAT voltage/current, provides regulated 5V output for flight controller, and reports battery data via CAN (UAVCAN/DroneCAN). XT60 VBAT_IN and VBAT_OUT pass-through; Power/CAN 6-pin connector. Input 10–62V; up to ~90A sensing. Left XT60 = VBAT_IN, right XT60 = VBAT_OUT."
+			(at 177.8 182.118 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "95a7cf80-a320-423c-89ff-a02da7c0f7a9")
+		)
+		(pin ""
+			(uuid "ae381c23-4796-4ec1-90f7-df434144afcc")
+		)
+		(pin ""
+			(uuid "ef886b3a-aaf5-464c-ab5b-6a63cf12e3aa")
+		)
+		(pin ""
+			(uuid "9d735661-a1f0-4eb1-9bae-9183ef22aceb")
+		)
+		(pin ""
+			(uuid "93fcd8d6-32bf-4356-90e2-7ea05faa3f8e")
+		)
+		(pin ""
+			(uuid "59060916-eef6-4d70-acb7-2eda5c0947fa")
+		)
+		(pin ""
+			(uuid "56f918eb-fb33-4a66-98c9-9ca990c12ea0")
+		)
+		(pin ""
+			(uuid "19aa2640-56f5-4745-b0a1-b29eb6856a7e")
+		)
+		(instances
+			(project ""
+				(path "/35238ef7-ffdb-4f16-8db9-6f0c236a0719"
+					(reference "U1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Drones:PM08_CAN_XT90")
+		(at 99.06 166.37 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1e78a74c-8362-42f0-867b-6bf9e076ca64")
+		(property "Reference" "PM08_CAN1"
+			(at 123.19 162.5599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "~"
+			(at 123.19 165.0999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 99.06 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 99.06 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 99.06 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "94848c25-b49e-4775-98d7-26276f7411d7")
+		)
+		(pin ""
+			(uuid "b50a79bd-efee-48c7-9ea9-137f20c09ab8")
+		)
+		(pin ""
+			(uuid "7ffac0b3-358d-4cfa-b70c-d602faaf6e54")
+		)
+		(pin ""
+			(uuid "9a342a25-a562-4d41-a920-2a706bb32212")
+		)
+		(pin ""
+			(uuid "590b426a-506a-4122-b345-837b63d592d6")
+		)
+		(pin ""
+			(uuid "b0620758-0df6-43fd-8347-8ff9afea20b1")
+		)
+		(pin ""
+			(uuid "06565e05-ec1d-427d-be65-3ed1508de05e")
+		)
+		(pin ""
+			(uuid "66dc828b-e779-4ece-9995-00973dd25349")
+		)
+		(pin ""
+			(uuid "793f986b-6d06-43fe-9576-84035dbd7358")
+		)
+		(pin ""
+			(uuid "74f6ccc1-f7fa-4bdb-9cc2-317ed6d0c445")
+		)
+		(pin ""
+			(uuid "89aac072-5993-42d2-ac62-64445eaccb94")
+		)
+		(pin ""
+			(uuid "eef9ebcc-31bb-4489-b7f3-8289658e06bf")
+		)
+		(pin ""
+			(uuid "e5063c25-588a-4061-8a36-b4bb2475095c")
+		)
+		(pin ""
+			(uuid "98eb41a2-5569-40e9-9d8d-f3519adbfa54")
+		)
+		(instances
+			(project ""
+				(path "/35238ef7-ffdb-4f16-8db9-6f0c236a0719"
+					(reference "PM08_CAN1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Drones:6S_Lipo_EC5_Tattu")
+		(at 146.05 190.5 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "abc58784-66ac-44b0-a5e9-3554e5217fb0")
+		(property "Reference" "6S_Lipo_EC5f1"
+			(at 156.21 189.2299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "~"
+			(at 156.21 191.7699 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 146.05 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 146.05 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "lipo /tattu/30c /22.2v /266.4wh/ EC5 female/ 12000mah"
+			(at 145.542 199.644 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "253dff74-c23f-41d3-bb49-8a5dafe79b31")
+		)
+		(instances
+			(project ""
+				(path "/35238ef7-ffdb-4f16-8db9-6f0c236a0719"
+					(reference "6S_Lipo_EC5f1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)
